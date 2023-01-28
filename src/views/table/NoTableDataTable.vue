@@ -133,7 +133,7 @@ getBillData(param);
 function getBillData(param: any) {
   console.log('触发了getBillData');
 
-  GetNoTypeData(param).then((res) => {
+  GetNoTypeData(param).then((res: any) => {
     total.value = res.data.total;
     res.data.bill.forEach((element: any) => {
       element.checked = false;
