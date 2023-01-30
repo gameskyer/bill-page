@@ -39,6 +39,8 @@ import type { FunctionalComponent } from 'vue';
 import type { CheckboxValueType, Column } from 'element-plus';
 import type { FormInstance } from 'element-plus';
 import { Search, Check, CircleCloseFilled } from '@element-plus/icons-vue';
+
+
 const total = ref();
 const currentPage = ref(1);
 const pageSize = ref(100);
@@ -99,8 +101,9 @@ const submitFrom = async () => {
     ElMessage.error('请选择类型.');
     return;
   }
-  await UpdateBillType(updataParam);
-  getBillData(param)
+  await UpdateBillType(updataParam).then(() => {
+    getBillData(param)
+  });
 }
 
 const columns: Column<any>[] = [
@@ -131,7 +134,7 @@ const param = reactive({
 });
 getBillData(param);
 function getBillData(param: any) {
-  console.log('触发了getBillData');
+  console.log('触发了getBillData', param);
 
   GetNoTypeData(param).then((res: any) => {
     total.value = res.data.total;

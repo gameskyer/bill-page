@@ -1,16 +1,17 @@
 import axios from "axios"
 const service = axios.create({
   // baseURL: process.env.VUE_APP_BASE_API,
-  baseURL: '/api',
+  baseURL: 'http://localhost:8004',
   // url = base url + request url
   // withCredentials: true, 
   // send cookies when cross-domain requests
-  timeout: 5000 // request timeout
+  // timeout: 5000 // request timeout
 })
 
 // request interceptor
 service.interceptors.request.use(function (config) {
   console.log("请求", config)
+  //在发送请求之前做某件事
 
   // 在发送请求之前做些什么
   return config;

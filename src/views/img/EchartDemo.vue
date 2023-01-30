@@ -10,7 +10,7 @@ import { ref, reactive, unref } from 'vue-demi';
 import { GetBillStackedLine } from '@/js/api/billApi';
 export default {
   created() { },
-  mounted() {
+  setup() {
     type BillStackedLineType = {
       billType: string;
       billStackedLineData: Array<string | number | Date>;
