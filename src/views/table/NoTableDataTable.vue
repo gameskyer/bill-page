@@ -49,7 +49,7 @@ const ruleForm = reactive({
   name: '',
   billTypes: [],
 });
-const options = ref([]);
+const options = ref<any>([]);
 const handleSizeChange = (val: number) => {
   console.log('触发了handleSizeChange');
   param.results = val;
@@ -63,9 +63,9 @@ const handleCurrentChange = (val: number) => {
 
 GetBillTypeList().then((res) => {
   console.log('触发了GetBillTypeList');
-  let arr = new Array();
+  let arr = new Array<any>();
   Object.keys(res.data).forEach((key) => {
-    let obj = new Object();
+    let obj: any = new Object
     obj.value = res.data[key].billType;
     obj.label = res.data[key].billTypeName;
     arr.push(obj);
@@ -85,14 +85,13 @@ const resetForm = (formEl: FormInstance | undefined) => {
 };
 
 const submitFrom = async () => {
-  console.log('触发了submitFrom');
-  const data = tableData.value;
-  const arr1 = data.filter((row) => {
+  const data = unref(tableData);
+  const arr1 = data.filter((row: { checked: boolean; }) => {
     return row.checked == true;
   });
-  let updataParam = new Object();
+  let updataParam: any = new Object();
   let ids = new Array();
-  arr1.forEach((obj) => {
+  arr1.forEach((obj: any) => {
     ids.push(obj.id);
   });
   updataParam.id = ids;
@@ -126,7 +125,7 @@ const columns: Column<any>[] = [
     width: 150,
   },
 ];
-const tableData = ref([Object]);
+const tableData = ref<any>([Object]);
 const param = reactive({
   results: pageSize.value,
   page: currentPage.value,
@@ -177,12 +176,12 @@ columns.unshift({
   headerCellRenderer: () => {
     const _data = unref(tableData);
     const onChange = (value: CheckboxValueType) =>
-    (tableData.value = _data.map((row) => {
+    (tableData.value = _data.map((row: { checked: string | number | boolean; }) => {
       row.checked = value;
       return row;
     }));
-    const allSelected = _data.every((row) => row.checked);
-    const containsChecked = _data.some((row) => row.checked);
+    const allSelected = _data.every((row: { checked: string | number | boolean; }) => row.checked);
+    const containsChecked = _data.some((row: { checked: string | number | boolean; }) => row.checked);
     return (
       <SelectionCell
         value={allSelected}
