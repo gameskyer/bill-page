@@ -11,10 +11,10 @@
       </el-select>
     </el-form-item>
     <el-form-item label="日期" prop="date">
-      <el-select v-model="ruleForm.date" placeholder="日期" clearable>
-        <el-cascader v-model="value" :options="dateList" @change="handleChange" />
-        <!-- <el-option v-for="option in dateList" :key="option.value" :label="option.label" :value="option.value" /> -->
-      </el-select>
+      <!-- <el-select v-model="ruleForm.date" placeholder="日期" clearable> -->
+      <el-cascader v-model="value" :options="dateList" @change="handleChange" />
+      <!-- <el-option v-for="option in dateList" :key="option.value" :label="option.label" :value="option.value" /> -->
+      <!-- </el-select> -->
     </el-form-item>
     <el-form-item label="日期区间" prop="dateRange">
       <el-date-picker v-model="ruleForm.dateRange" type="daterange" start-placeholder="开始时间" end-placeholder="结束时间"
@@ -169,15 +169,21 @@ GetBillDateList().then((res) => {
   let arr = new Array();
   Object.keys(res.data).forEach((key) => {
     let obj: any = new Object();
-    obj.value = res.data[key];
-    obj.label = res.data[key];
+    obj = res.data[key];
     arr.push(obj);
   });
+
   dateList.value = arr;
+  console.log(dateList.value)
 });
 const value = ref([])
 const handleChange = (value: any) => {
-  console.log(value)
+  var date = ""
+  for (const aa of value) {
+    date += aa
+  }
+  ruleForm.date = date as unknown as string
+  console.log(value[1])
 }
 const props = {
   expandTrigger: 'hover' as const,
@@ -227,3 +233,7 @@ function getBillData(param: Object) {
   margin-bottom: 20px;
 }
 </style>
+
+function aa(aa: any) {
+  throw new Error('Function not implemented.');
+}
