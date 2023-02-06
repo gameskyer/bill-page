@@ -1,8 +1,7 @@
 <template>
   <el-form :inline="true" :model="ruleForm" class="demo-form-inline">
-    <el-form-item label="日期" prop="date"></el-form-item>
-    <el-cascader v-model="value" :options="dateList" />
-
+    <el-form-item label="日期" prop="date">
+      <el-cascader v-model="value" :options="dateList" />
     </el-form-item>
     <el-button>清除</el-button>
 
