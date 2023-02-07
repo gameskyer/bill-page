@@ -1,10 +1,11 @@
 <template>
-  <el-form :inline="true" :model="ruleForm" class="demo-form-inline">
+  <el-form ref="ruleFormRef" :inline="true" :model="ruleForm" class="demo-form-inline">
     <el-form-item label="日期" prop="date">
-      <el-cascader v-model="value" :options="dateList" />
+      <el-cascader v-model="value" :options="dateList" @change="handleChange" clearable />
     </el-form-item>
-    <el-button>清除</el-button>
-
+    <el-form-item>
+      <el-button @click="resetForm(ruleFormRef)">清除</el-button>
+    </el-form-item>
   </el-form>
   <div id="myChart" :style="{ width: '100%', height: '1000px' }"></div>
 
@@ -22,23 +23,19 @@ export default {
     const ruleForm = reactive({
       date: ''
     });
-    // GetBillDateList().then((res) => {
-    //   let arr = new Array();
-    //   for (var data of res.data) {
-    //     let obj = new Object();
-    //     obj = data
-    //     arr.push(obj);
-    //   }
-    //   // Object.keys(res.data).forEach((key) => {
-    //   //   let obj = new Object();
-    //   //   obj = res.data[key];
-    //   //   arr.push(obj);
-    //   // });
-    //   // console.log(res.data)
-    //   dateList.value = arr;
-    //   console.log(dateList.value)
-    // });
-    return ruleForm, dateList
+    const ruleFormRef = ref();
+    GetBillDateList().then((res) => {
+      let arr = new Array();
+      for (var data of res.data) {
+        let obj = new Object();
+        obj = data
+        arr.push(obj);
+      }
+
+      dateList.value = arr;
+      console.log(dateList.value)
+    });
+    return { ruleForm, dateList, ruleFormRef }
   },
   async mounted () {
     const data = ref();
@@ -157,18 +154,28 @@ export default {
     window.addEventListener('resize', myChart.resize);
   },
   methods: {
-    // handleChange: function (value) {
-    //   var date = ""
-    //   for (const aa of value) {
-    //     date += aa
-    //   }
-    //   ruleForm.date = date
-    //   console.log(value)
-    // },
-    // resetForm: function (formEl) {
-    //   if (!formEl) return;
-    //   formEl.resetFields();
-    // }
+    handleChange: function (value) {
+      var date = ""
+      if (!value) {
+        this.ruleForm.date = date
+      } else {
+        for (const aa of value) {
+          date += aa
+        }
+        this.ruleForm.date = date
+      }
+
+
+      console.log(value)
+    },
+    resetForm: function (formEl) {
+      console.log(formEl)
+      console.log(!formEl)
+      if (!formEl) {
+        return
+      };
+      formEl.resetFields();
+    }
   }
 };
 </script>
