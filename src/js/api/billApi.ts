@@ -2,7 +2,14 @@ import axios from '@/js/http/axios_http';
 import qs from 'qs'
 
 
+export function GetCookieImtData(date: String) {
 
+  return axios({
+    method: 'get',
+    url: '/cookieimg/CookieImgByBillType/' + date
+  });
+
+}
 
 export function SelectBill(params: Object) {
   return axios({

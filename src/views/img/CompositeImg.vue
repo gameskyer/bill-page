@@ -1,41 +1,14 @@
 <template>
-  <el-form ref="ruleFormRef" :inline="true" :model="ruleForm" class="demo-form-inline">
-    <el-form-item label="日期" prop="date">
-      <el-cascader v-model="value" :options="dateList" @change="handleChange" clearable />
-    </el-form-item>
-    <el-form-item>
-      <el-button @click="resetForm(ruleFormRef)">清除</el-button>
-    </el-form-item>
-  </el-form>
   <div id="myChart" :style="{ width: '100%', height: '1000px' }"></div>
-
 </template>
 
 <script>
 import * as echarts from 'echarts';
 import axios from 'axios';
-import { FormInstance } from 'element-plus';
-import { ref, unref, reactive } from 'vue-demi';
-import { GetBillStackedLine, GetBillDateList } from '@/js/api/billApi';
+import { ref, unref } from 'vue';
+import { GetBillStackedLine } from '@/js/api/billApi';
 export default {
   setup () {
-    const dateList = ref();
-    const ruleForm = reactive({
-      date: ''
-    });
-    const ruleFormRef = ref();
-    GetBillDateList().then((res) => {
-      let arr = new Array();
-      for (var data of res.data) {
-        let obj = new Object();
-        obj = data
-        arr.push(obj);
-      }
-
-      dateList.value = arr;
-      console.log(dateList.value)
-    });
-    return { ruleForm, dateList, ruleFormRef }
   },
   async mounted () {
     const data = ref();
@@ -153,29 +126,5 @@ export default {
 
     window.addEventListener('resize', myChart.resize);
   },
-  methods: {
-    handleChange: function (value) {
-      var date = ""
-      if (!value) {
-        this.ruleForm.date = date
-      } else {
-        for (const aa of value) {
-          date += aa
-        }
-        this.ruleForm.date = date
-      }
-
-
-      console.log(value)
-    },
-    resetForm: function (formEl) {
-      console.log(formEl)
-      console.log(!formEl)
-      if (!formEl) {
-        return
-      };
-      formEl.resetFields();
-    }
-  }
 };
 </script>
