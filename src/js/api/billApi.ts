@@ -1,13 +1,33 @@
 import axios from '@/js/http/axios_http';
 import qs from 'qs'
 
+export function GetPercentage(month: String) {
+  if (month != "") {
+    return axios({
+      method: 'get',
+      url: '/cookieimg/GetPercentage/' + month
+    });
+  } else {
+    return axios({
+      method: 'get',
+      url: '/cookieimg/GetPercentage'
+    });
+  }
 
-export function GetCookieImtData(date: String) {
+}
 
-  return axios({
-    method: 'get',
-    url: '/cookieimg/CookieImgByBillType/' + date
-  });
+export function GetCookieImtData(month: String) {
+  if (month != "") {
+    return axios({
+      method: 'get',
+      url: '/cookieimg/CookieImgByBillType/' + month
+    });
+  } else {
+    return axios({
+      method: 'get',
+      url: '/cookieimg/CookieImgByBillType'
+    });
+  }
 
 }
 

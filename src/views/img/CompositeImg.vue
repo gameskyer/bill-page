@@ -1,14 +1,9 @@
 <template>
   <div id="myChart" :style="{ width: '100%', height: '1000px' }"></div>
   <div class="demo-progress">
-    <div v-for="value in arr"> <label>{{ value.title }}</label>
-      <el-progress :text-inside="true" :stroke-width="20" :percentage="value.percentageNub" color="#aaa" />
+    <div v-for="value in arr"> <label>{{ value.billTypeName }}</label>
+      <el-progress :text-inside="true" :stroke-width="20" :percentage="value.percentage" color="#aaa" />
     </div>
-
-    <el-progress :text-inside="true" :stroke-width="20" :percentage="70" color="#aaa" />
-    <el-progress :text-inside="true" :stroke-width="20" :percentage="100" status="success" />
-    <el-progress :text-inside="true" :stroke-width="20" :percentage="80" status="warning" />
-    <el-progress :text-inside="true" :stroke-width="20" :percentage="50" status="exception" />
   </div>
 </template>
 <style scoped>
@@ -21,27 +16,14 @@
 <script>
 import * as echarts from 'echarts';
 import axios from 'axios';
-import { ref, unref } from 'vue';
-import { GetBillStackedLine } from '@/js/api/billApi';
+import { ref, unref, reactive } from 'vue';
+import { GetBillStackedLine, GetPercentage } from '@/js/api/billApi';
 export default {
   setup () {
-    const datas = {
-      arr: [
-        {
-          title: '星期一',
-          percentageNub: 90
-        }, {
-          title: '星期二',
-          percentageNub: 10
-
-        }, {
-          title: '星期三',
-          percentageNub: 30
-
-        }
-
-      ]
-    }
+    const datas = reactive({ arr: [] })
+    GetPercentage("").then((res) => {
+      datas.arr = res.data
+    })
     return datas
   },
   async mounted () {
