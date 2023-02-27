@@ -3,7 +3,7 @@
   <div class="demo-progress">
     <div v-for="value in arr">
       <label>{{ value.billTypeName }}</label>
-      <el-progress :text-inside="true" :stroke-width="20" :percentage="value.percentage" color="#aaa" />
+      <el-progress :text-inside="true" :stroke-width="20" :percentage="value.percentage" :color="value.color" />
     </div>
   </div>
 </template>
@@ -41,12 +41,22 @@ export default {
   setup () {
     const datas = reactive({ arr: [] });
     typeColor.forEach((res) => {
-      console.log(res)
+      // console.log(res)
     })
     GetPercentage('').then((res) => {
+      for (var i = 0; i < res.data.length; i++) {
+        console.log(res.data[i])
+        for (var j = 0; j < typeColor.length; j++) {
+          var name = res.data[i].billTypeName
+          if (name === typeColor[j].billTypeName) {
+            res.data[i].color = typeColor[j].billTypeColor
+          }
+        }
+      }
       datas.arr = res.data;
     });
-    datas.arr
+
+
     return datas;
   },
   async mounted () {
