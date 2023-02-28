@@ -1,66 +1,67 @@
-export const typeColor = [
-  {
-    "billTypeColor": "#4f84db",
-    "billTypeName": "饮食",
-  },
-  {
-    "billTypeColor": "#12c112",
-    "billTypeName": "房租",
-  },
-  {
-    "billTypeColor": "#9dc3ff",
-    "billTypeName": "交通",
-  },
-  {
-    "billTypeColor": "#ffb4ff",
-    "billTypeName": "娱乐",
-  },
-  {
-    "billTypeColor": "#00ffc4",
-    "billTypeName": "游戏",
-  },
-  {
-    "billTypeColor": "#ffff3c",
-    "billTypeName": "生活用品",
-  },
-  {
-    "billTypeColor": "#f45252",
-    "billTypeName": "超市",
-  },
-  {
-    "billTypeColor": "#e6c662",
-    "billTypeName": "日常消费",
-  },
-  {
-    "billTypeColor": "#45C2E0",
-    "billTypeName": "衣物",
-  },
-  {
-    "billTypeColor": "#A3D400",
-    "billTypeName": "网费-话费",
-  },
-  {
-    "billTypeColor": "#C1EBDD",
-    "billTypeName": "水电气",
-  },
-  {
-    "billTypeColor": "#FFC851",
-    "billTypeName": "药品",
-  },
-  {
-    "billTypeColor": "#1869A0",
-    "billTypeName": "花呗",
-  },
-  {
-    "billTypeColor": "#f2b7b7",
-    "billTypeName": "电子设备",
-  },
-  {
-    "billTypeColor": "#649b4b",
-    "billTypeName": "红包",
-  },
-  {
-    "billTypeColor": "#9F79EE",
-    "billTypeName": "会员",
-  }
-]
+export let typeColor =
+  new Map([
+    [
+
+      "饮食", "#4f84db"
+    ],
+    [
+
+      "房租", "#12c112"
+    ],
+    [
+
+      "交通", "#9dc3ff"
+    ],
+    [
+
+      "娱乐", "#ffb4ff"
+    ],
+    [
+
+      "游戏", "#00ffc4"
+    ],
+    [
+
+      "生活用品", "#ffff3c"
+    ],
+    [
+
+      "超市", "#f45252"
+    ],
+    [
+
+      "日常消费", "#e6c662"
+    ],
+    [
+
+      "衣物", "#45C2E0"
+    ],
+    [
+
+      "网费-话费", "#A3D400"
+    ],
+    [
+
+      "水电气", "#C1EBDD"
+    ],
+    [
+
+      "药品", "#FFC851"
+    ],
+    [
+
+      "花呗", "#1869A0"
+    ],
+    [
+
+      "电子设备", "#f2b7b7"
+    ],
+    [
+
+      "红包", "#649b4b"
+    ],
+    [
+
+      "会员", "#9F79EE"
+    ]
+  ])

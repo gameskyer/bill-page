@@ -22,15 +22,7 @@
   background-color: rgba(128, 126, 126, 0.2);
 }
 </style>
-<!-- <style lang="sass" scoped>
-:deep(.show-progress .el-progress-bar__inner) {
-  background-image: linear-gradient(
-    to right,
-    rgba(0, 141, 0, 1),   
-    rgba(190, 217, 0, 1)
-  );
-}
-</style> -->
+
 <script>
 import * as echarts from 'echarts';
 import axios from 'axios';
@@ -40,18 +32,12 @@ import { typeColor } from '@/js/api/commonUtil';
 export default {
   setup () {
     const datas = reactive({ arr: [] });
-    typeColor.forEach((res) => {
-      // console.log(res)
-    })
+
     GetPercentage('').then((res) => {
       for (var i = 0; i < res.data.length; i++) {
-        console.log(res.data[i])
-        for (var j = 0; j < typeColor.length; j++) {
-          var name = res.data[i].billTypeName
-          if (name === typeColor[j].billTypeName) {
-            res.data[i].color = typeColor[j].billTypeColor
-          }
-        }
+        var name = res.data[i].billTypeName
+        res.data[i].color = typeColor.get(name)
+
       }
       datas.arr = res.data;
     });
@@ -147,6 +133,7 @@ export default {
             var ob2 = new Object();
             ob2.value = respJSON[i].billPrice;
             ob2.name = respJSON[i].billTypeName;
+            ob2.itemStyle = { color: typeColor.get(respJSON[i].billTypeName) }
             respData.push(ob2);
           }
           data3.value = respData;
