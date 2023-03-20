@@ -32,20 +32,18 @@ import { typeColor } from '@/js/api/commonUtil';
 export default {
   setup () {
     const datas = reactive({ arr: [] });
-
-    GetPercentage('').then((res) => {
+    GetPercentage("").then((res) => {
       for (var i = 0; i < res.data.length; i++) {
         var name = res.data[i].billTypeName
         res.data[i].color = typeColor.get(name)
-
       }
       datas.arr = res.data;
     });
-
-
     return datas;
   },
+
   async mounted () {
+
     const data = ref();
     await GetBillStackedLine().then((res) => {
       data.value = res.data;
@@ -90,7 +88,8 @@ export default {
     });
 
     var option;
-    setTimeout(function () {
+    setTimeout(() => {
+
       option = {
         tooltip: {
           trigger: 'axis',
@@ -127,6 +126,14 @@ export default {
             'http://127.0.0.1:8004/cookieimg/CookieImgByBillType/' +
             event.name,
         }).then((res) => {
+
+          GetPercentage(event.name).then((res) => {
+            for (var i = 0; i < res.data.length; i++) {
+              var name = res.data[i].billTypeName
+              res.data[i].color = typeColor.get(name)
+            }
+            this.arr = res.data
+          });
           var respData = new Array();
           var respJSON = res.data;
           for (var i = 0; i < respJSON.length; i++) {
@@ -134,6 +141,7 @@ export default {
             ob2.value = respJSON[i].billPrice;
             ob2.name = respJSON[i].billTypeName;
             ob2.itemStyle = { color: typeColor.get(respJSON[i].billTypeName) }
+            ob2.label = { color: typeColor.get(respJSON[i].billTypeName) }
             respData.push(ob2);
           }
           data3.value = respData;

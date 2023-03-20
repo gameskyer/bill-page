@@ -55,14 +55,12 @@
   margin: 0px 15px 0px 0px;
 }
 </style>
-<script lang="ts" setup>
+<script lang="tsx" setup>
 import { reactive, ref } from 'vue';
-import type { FormInstance } from 'element-plus';
 import { SelectBill, GetBillTypeList, GetBillDateList } from '@/js/api/billApi';
-import { ElMessage, ElMessageBox } from 'element-plus';
+import { ElMessage, ElMessageBox, TableV2SortOrder, ElButton } from 'element-plus';
 
-import type { UploadProps, UploadUserFile } from 'element-plus';
-import { TableV2SortOrder } from 'element-plus';
+import type { UploadProps, UploadUserFile, FormInstance, Column, } from 'element-plus';
 import HelloWorld from '@/components/HelloWorld.vue';
 
 //上传组件
@@ -95,7 +93,7 @@ const beforeRemove: UploadProps['beforeRemove'] = (uploadFile, uploadFiles) => {
 //表格
 const priceAvg = ref();
 const priceSum = ref();
-const columns = [
+const columns: Column<any>[] = [
   {
     dataKey: 'billName',
     key: 'billName',
@@ -119,6 +117,20 @@ const columns = [
     key: 'billTypeName',
     title: '消费类型',
     width: 150,
+  }, {
+    key: 'operations',
+    title: 'Operations',
+    cellRenderer: () => (
+      <>
+        <ElButton size="small" onClick={getRowData}>Edit</ElButton>
+        <ElButton size="small" onClick={getRowData} type="danger">
+          Delete
+        </ElButton>
+      </>
+    ),
+    width: 150,
+    align: 'center',
+    flexGrow: 1,
   },
 ];
 
@@ -164,6 +176,10 @@ GetBillTypeList().then((res) => {
   });
   options.value = arr;
 });
+
+const getRowData = ((row: any) => {
+  console.log(row.ids)
+})
 
 GetBillDateList().then((res) => {
   let arr = new Array();
@@ -234,6 +250,3 @@ function getBillData(param: Object) {
 }
 </style>
 
-function aa(aa: any) {
-  throw new Error('Function not implemented.');
-}
