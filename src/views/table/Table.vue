@@ -1,4 +1,16 @@
 <template>
+  <el-dialog v-model="dialogVisible" title="Tips" width="30%" :before-close="handleClose">
+    <span>This is a message</span>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="dialogVisible = false">Cancel</el-button>
+        <el-button type="primary" @click="dialogVisible = false">
+          Confirm
+        </el-button>
+      </span>
+    </template>
+  </el-dialog>
+
   <HelloWorld :count="total" :priceAvg="priceAvg" :priceSum="priceSum" />
   <el-form ref="ruleFormRef" :inline="true" :model="ruleForm" class="demo-form-inline">
     <el-form-item label="名称" prop="name">
@@ -11,10 +23,7 @@
       </el-select>
     </el-form-item>
     <el-form-item label="日期" prop="date">
-      <!-- <el-select v-model="ruleForm.date" placeholder="日期" clearable> -->
       <el-cascader v-model="value" :options="dateList" @change="handleChange" />
-      <!-- <el-option v-for="option in dateList" :key="option.value" :label="option.label" :value="option.value" /> -->
-      <!-- </el-select> -->
     </el-form-item>
     <el-form-item label="日期区间" prop="dateRange">
       <el-date-picker v-model="ruleForm.dateRange" type="daterange" start-placeholder="开始时间" end-placeholder="结束时间"
@@ -22,21 +31,11 @@
     </el-form-item>
 
     <el-form-item>
-      <el-upload v-model:file-list="fileList" class="upload-demo" :show-file-list="false"
-        action="http://127.0.0.1:8004/table/uploadExcel" multiple :on-preview="handlePreview" :on-remove="handleRemove"
-        :before-remove="beforeRemove" :limit="3" :on-exceed="handleExceed">
+      <el-upload class="upload-demo" :show-file-list="false" action="http://127.0.0.1:8004/table/uploadExcel" multiple>
         <el-button type="primary">上传表格</el-button>
       </el-upload>
-
       <el-button type="primary" @click="onSubmit">确认</el-button>
       <el-button @click="resetForm(ruleFormRef)">清除</el-button>
-      <!-- <el-button> Click to upload
-        <el-upload v-model:file-list="fileList" class="upload-demo"
-          action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15" multiple :on-preview="handlePreview"
-          :on-remove="handleRemove" :before-remove="beforeRemove" :limit="3" :on-exceed="handleExceed">
-
-        </el-upload> -->
-      <!-- </el-button>  -->
     </el-form-item>
   </el-form>
   <div style="height: 75%">
@@ -57,40 +56,30 @@
 </style>
 <script lang="tsx" setup>
 import { reactive, ref } from 'vue';
-import { SelectBill, GetBillTypeList, GetBillDateList } from '@/js/api/billApi';
+import { SelectBill, GetBillTypeList, GetBillDateList, DeleteBillRow } from '@/js/api/billApi';
 import { ElMessage, ElMessageBox, TableV2SortOrder, ElButton } from 'element-plus';
 
+// import type { UploadProps, UploadUserFile, FormInstance, Column, } from 'element-plus';
 import type { UploadProps, UploadUserFile, FormInstance, Column, } from 'element-plus';
+
 import HelloWorld from '@/components/HelloWorld.vue';
 
+
+const handleClose = (done: () => void) => {
+  ElMessageBox.confirm('Are you sure to close this dialog?')
+    .then(() => {
+      done()
+    })
+    .catch(() => {
+      // catch error
+    })
+
+}
 //上传组件
-const fileList = ref<UploadUserFile[]>([]);
 
-const handleRemove: UploadProps['onRemove'] = (file, uploadFiles) => {
-  console.log(file, uploadFiles);
-};
-
-const handlePreview: UploadProps['onPreview'] = (uploadFile) => {
-  console.log(uploadFile);
-};
-
-const handleExceed: UploadProps['onExceed'] = (files, uploadFiles) => {
-  ElMessage.warning(
-    `The limit is 3, you selected ${files.length
-    } files this time, add up to ${files.length + uploadFiles.length
-    } totally`
-  );
-};
-
-const beforeRemove: UploadProps['beforeRemove'] = (uploadFile, uploadFiles) => {
-  return ElMessageBox.confirm(
-    `Cancel the transfert of ${uploadFile.name} ?`
-  ).then(
-    () => true,
-    () => false
-  );
-};
 //表格
+const dialogVisible = ref(false)
+
 const priceAvg = ref();
 const priceSum = ref();
 const columns: Column<any>[] = [
@@ -119,12 +108,12 @@ const columns: Column<any>[] = [
     width: 150,
   }, {
     key: 'operations',
-    title: 'Operations',
-    cellRenderer: () => (
+    title: '操作',
+    cellRenderer: (row) => (
       <>
-        <ElButton size="small" onClick={getRowData}>Edit</ElButton>
-        <ElButton size="small" onClick={getRowData} type="danger">
-          Delete
+        <ElButton size="small" >Edit</ElButton>
+        <ElButton size="small" onClick={handleDelete.bind(this, row)} type="danger">
+          删除
         </ElButton>
       </>
     ),
@@ -177,8 +166,12 @@ GetBillTypeList().then((res) => {
   options.value = arr;
 });
 
-const getRowData = ((row: any) => {
-  console.log(row.ids)
+const handleDelete = ((row: any) => {
+  dialogVisible.value = true
+  DeleteBillRow(row.rowData).then(() => {
+    getBillData(param)
+  })
+  // console.log(row)
 })
 
 GetBillDateList().then((res) => {
@@ -240,6 +233,10 @@ function getBillData(param: Object) {
 
 .demo-date-picker .block:last-child {
   border-right: none;
+}
+
+.dialog-footer button:first-child {
+  margin-right: 10px;
 }
 
 .demo-date-picker .demonstration {

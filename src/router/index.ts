@@ -7,47 +7,47 @@ import test from '../views/table/test.vue';
 import EchartDemo from '@/views/img/EchartDemo.vue';
 import CompositeImg from '@/views/img/CompositeImg.vue';
 const routes: Array<RouteRecordRaw> = [
-	{
-		path: '/compositeImg',
-		name: 'CompositeImg',
-		component: CompositeImg,
-	},
-	{
-		path: '/',
-		name: 'Home',
-		component: Table,
-	},
-	{
-		path: '/echart',
-		name: 'EchartDemo',
-		component: EchartDemo,
-	},
-	{
-		path: '/cookieImg',
-		name: 'CookieImg',
-		component: () =>
-			import(/* webpackChunkName: "about" */ '@/views/img/CookieImg.vue'),
-	},
-	{
-		path: '/table',
-		name: 'Table',
-		component: Table,
-	},
-	{
-		path: '/noTypeTable',
-		name: 'NoTypeTable',
-		component: NoTypeTable,
-	},
-	{
-		path: '/test',
-		name: 'test',
-		component: test,
-	},
+  {
+    path: '/compositeImg',
+    name: 'CompositeImg',
+    component: CompositeImg,
+  },
+  {
+    path: '/',
+    name: 'Home',
+    component: Table,
+  },
+  {
+    path: '/echart',
+    name: 'EchartDemo',
+    component: EchartDemo,
+  },
+  {
+    path: '/cookieImg',
+    name: 'CookieImg',
+    component: () =>
+      import(/* webpackChunkName: "about" */ '@/views/img/CookieImg.vue'),
+  },
+  {
+    path: '/table',
+    name: 'Table',
+    component: Table,
+  },
+  {
+    path: '/noTypeTable',
+    name: 'NoTypeTable',
+    component: NoTypeTable,
+  },
+  {
+    path: '/test',
+    name: 'test',
+    component: test,
+  },
 ];
 
 const router = createRouter({
-	history: createWebHistory(process.env.BASE_URL),
-	routes,
+  history: createWebHistory(process.env.BASE_URL),
+  routes,
 });
 
 export default router;

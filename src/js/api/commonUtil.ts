@@ -22,7 +22,7 @@ export let typeColor =
     ],
     [
 
-      "生活用品", "#ffff3c"
+      "生活用品", "#f18f3c"
     ],
     [
 

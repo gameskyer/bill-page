@@ -13,7 +13,6 @@ export function GetPercentage(month: String) {
       url: '/cookieimg/GetPercentage'
     });
   }
-
 }
 
 export function GetCookieImtData(month: String) {
@@ -30,7 +29,14 @@ export function GetCookieImtData(month: String) {
   }
 
 }
-
+export function DeleteBillRow(params: Object) {
+  return axios({
+    method: 'post',
+    url: '/table/deleteById',
+    data: params,
+    headers: { 'content-type': 'application/json' },
+  });
+}
 export function SelectBill(params: Object) {
   return axios({
     method: 'post',
