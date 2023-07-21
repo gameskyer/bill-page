@@ -42,15 +42,7 @@ const locale = computed(() => (language.value === 'zh-cn'))
 const config = ref({
   autoInsertSpace: true,
 })
-// import { ref } from "vue";
-// import { Menu as IconMenu, Message, Setting, Memo } from "@element-plus/icons-vue";
-// 数据
-// const item = {
-//   date: "2016-05-02",
-//   name: "Tom",
-//   address: "No. 189, Grove St, Los Angeles",
-// };
-// const tableData = ref(Array.from({ length: 20 }).fill(item));
+
 </script>
 
 <style >

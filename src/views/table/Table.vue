@@ -1,11 +1,11 @@
 <template>
-  <el-dialog v-model="dialogVisible" title="Tips" width="30%" :before-close="handleClose">
-    <span>This is a message</span>
+  <el-dialog v-model="dialogVisible" title="提示" width="30%" :before-close="handleClose">
+    <span>你确定要删除该记录吗？</span>
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="dialogVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="dialogVisible = false">
-          Confirm
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="DeleteData(rowData)">
+          确定
         </el-button>
       </span>
     </template>
@@ -79,9 +79,12 @@ const handleClose = (done: () => void) => {
 
 //表格
 const dialogVisible = ref(false)
-
+const rowData = ref("")
+//平均每笔消费
 const priceAvg = ref();
+//消费总额
 const priceSum = ref();
+//表头
 const columns: Column<any>[] = [
   {
     dataKey: 'billName',
@@ -127,12 +130,14 @@ const total = ref();
 const currentPage = ref(1);
 const pageSize = ref(10);
 const ruleFormRef = ref<FormInstance>();
+//form表单结构
 const ruleForm = reactive({
   name: '',
   date: '',
   dateRange: '',
   billTypes: [],
 });
+//请求表格数据参数
 const param = reactive({
   results: pageSize.value,
   page: currentPage.value,
@@ -168,9 +173,8 @@ GetBillTypeList().then((res) => {
 
 const handleDelete = ((row: any) => {
   dialogVisible.value = true
-  DeleteBillRow(row.rowData).then(() => {
-    getBillData(param)
-  })
+  rowData.value = row.rowData
+
   // console.log(row)
 })
 
@@ -186,6 +190,12 @@ GetBillDateList().then((res) => {
   console.log(dateList.value)
 });
 const value = ref([])
+const DeleteData = (rowData: string) => {
+  dialogVisible.value = false
+  DeleteBillRow(rowData).then(() => {
+    getBillData(param)
+  })
+}
 const handleChange = (value: any) => {
   var date = ""
   for (const aa of value) {

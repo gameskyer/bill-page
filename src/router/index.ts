@@ -4,7 +4,6 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import Table from '../views/table/Table.vue';
 import NoTypeTable from '../views/table/NoTableDataTable.vue';
 import test from '../views/table/test.vue';
-import EchartDemo from '@/views/img/EchartDemo.vue';
 import CompositeImg from '@/views/img/CompositeImg.vue';
 const routes: Array<RouteRecordRaw> = [
   {
@@ -16,11 +15,6 @@ const routes: Array<RouteRecordRaw> = [
     path: '/',
     name: 'Home',
     component: Table,
-  },
-  {
-    path: '/echart',
-    name: 'EchartDemo',
-    component: EchartDemo,
   },
   {
     path: '/cookieImg',
