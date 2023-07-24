@@ -91,6 +91,14 @@ export default {
     setTimeout(() => {
 
       option = {
+        toolbox: {
+          feature: {
+            magicType: {
+              type: ['line', 'bar'] //图表类型切换
+            },
+            icon: "circle"
+          },
+        },
         tooltip: {
           trigger: 'axis',
           axisPointer: {

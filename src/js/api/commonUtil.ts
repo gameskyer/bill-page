@@ -10,7 +10,7 @@ export let typeColor =
     ],
     [
 
-      "交通", "#9dc3ff"
+      "交通", "#1dc3ff"
     ],
     [
 
@@ -34,7 +34,7 @@ export let typeColor =
     ],
     [
 
-      "衣物", "#45C2E0"
+      "衣物", "#6666cc"
     ],
     [
 

@@ -9,6 +9,8 @@ import axios from 'axios';
 import router from '../../router';
 import { GetCookieImtData, GetBillDateList } from '@/js/api/billApi'
 import { ref, unref } from 'vue';
+import { typeColor } from '@/js/api/commonUtil';
+
 export default {
 
   setup () {
@@ -42,21 +44,32 @@ export default {
     drawLine (data) {
       GetCookieImtData(data).then(function (response) {
         var echartsData = '[';
+        var respData = new Array();
+        // var respJSON = res.data;
         response.data.forEach((element) => {
-          let node =
-            '{"value":' +
-            element.billPrice +
-            ',"name":"' +
-            element.billTypeName +
-            '"},';
-          echartsData += node;
-        });
-        echartsData = echartsData.substring(
-          0,
-          echartsData.length - 1
-        );
-        echartsData = echartsData + ']';
-        let jsonData = JSON.parse(echartsData);
+          var ob2 = new Object();
+          ob2.value = element.billPrice;
+          ob2.name = element.billTypeName;
+          ob2.itemStyle = { color: typeColor.get(element.billTypeName) }
+          ob2.label = { color: typeColor.get(element.billTypeName) }
+          respData.push(ob2);
+        })
+        console.log(respData)
+        // response.data.forEach((element) => {
+        //   let node =
+        //     '{"value":' +
+        //     element.billPrice +
+        //     ',"name":"' +
+        //     element.billTypeName +
+        //     '"},';
+        //   echartsData += node;
+        // });
+        // echartsData = echartsData.substring(
+        //   0,
+        //   echartsData.length - 1
+        // );
+        // echartsData = echartsData + ']';
+        // let jsonData = JSON.parse(echartsData);
 
         // 基于准备好的dom，初始化echarts实例
         let myChart = echarts.init(
@@ -70,12 +83,6 @@ export default {
             top: '5%',
             left: 'center',
           },
-          //圆角
-          // itemStyle: {
-          // 	borderRadius: 8,
-          // 	borderColor: '#fff',
-          // 	borderWidth: 4,
-          // },
           series: [
             {
               name: '消费',
@@ -97,7 +104,7 @@ export default {
               labelLine: {
                 show: false,
               },
-              data: jsonData,
+              data: respData,
             },
           ],
         });
