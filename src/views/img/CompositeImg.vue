@@ -1,13 +1,15 @@
 <template>
   <div id="myChart" :style="{ width: '100%', height: '1000px' }"></div>
-  <div class="demo-progress">
+  <div id="category" :style="{ width: '100%', height: '500px' }"></div>
+
+  <!-- <div class="demo-progress">
     <div v-for="value in arr">
       <label>{{ value.billTypeName }}</label>
       <el-progress :text-inside="true" :stroke-width="20" :percentage="value.percentage" :color="value.color" />
     </div>
-  </div>
+  </div> -->
 </template>
-<style scoped>
+<!-- <style scoped>
 .demo-progress .el-progress--line {
   margin-top: 5px;
   margin-bottom: 15px;
@@ -21,7 +23,7 @@
 .demo-progress>>>.el-progress-bar__outer {
   background-color: rgba(128, 126, 126, 0.2);
 }
-</style>
+</style> -->
 
 <script>
 import * as echarts from 'echarts';
@@ -43,6 +45,80 @@ export default {
   },
 
   async mounted () {
+
+
+
+    var chartDoms = document.getElementById('category');
+    var categoryChart = echarts.init(chartDoms);
+    var categoryOption;
+
+    const category = [];
+    for (let i = 0; i < 5; ++i) {
+      category.push(Math.round(Math.random() * 200));
+    }
+    categoryOption = {
+      xAxis: {
+        max: 'dataMax'
+      },
+      yAxis: {
+        type: 'category',
+        data: ['A', 'B', 'C', 'D', 'E'],
+        inverse: true,
+        animationDuration: 300,
+        animationDurationUpdate: 300,
+        // max: 2 // only the largest 3 bars will be displayed
+      },
+      series: [
+        {
+          realtimeSort: true,
+          name: 'X',
+          type: 'bar',
+          data: category,
+          label: {
+            show: true,
+            position: 'right',
+            valueAnimation: true
+          }
+        }
+      ],
+      legend: {
+        show: true
+      },
+      animationDuration: 0,
+      animationDurationUpdate: 3000,
+      animationEasing: 'linear',
+      animationEasingUpdate: 'linear'
+    };
+    function run () {
+      for (var i = 0; i < category.length; ++i) {
+        if (Math.random() > 0.9) {
+          category[i] += Math.round(Math.random() * 2000);
+        } else {
+          category[i] += Math.round(Math.random() * 200);
+        }
+      }
+      categoryChart.setOption({
+        series: [
+          {
+            type: 'bar',
+            category
+          }
+        ]
+      });
+    }
+    setTimeout(function () {
+      run();
+    }, 0);
+    setInterval(function () {
+      run();
+    }, 3000);
+
+    categoryOption && categoryChart.setOption(categoryOption);
+
+
+
+
+
 
     const data = ref();
     await GetBillStackedLine().then((res) => {
@@ -89,7 +165,7 @@ export default {
 
     var option;
     setTimeout(() => {
-
+      console.log("seriesData:", seriesData)
       option = {
         toolbox: {
           feature: {
@@ -140,7 +216,7 @@ export default {
               var name = res.data[i].billTypeName
               res.data[i].color = typeColor.get(name)
             }
-            this.arr = res.data
+            datas.arr = res.data
           });
           var respData = new Array();
           var respJSON = res.data;
@@ -168,6 +244,8 @@ export default {
               data: data3.value,
             },
           ],
+
+
         });
       });
       myChart.setOption(option);

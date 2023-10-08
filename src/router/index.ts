@@ -17,6 +17,12 @@ const routes: Array<RouteRecordRaw> = [
     component: Table,
   },
   {
+    path: '/imageView',
+    name: 'ImageView',
+    component: () =>
+      import(/* webpackChunkName: "about" */ '@/views/table/imageView.vue'),
+  },
+  {
     path: '/cookieImg',
     name: 'CookieImg',
     component: () =>

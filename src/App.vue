@@ -65,7 +65,8 @@ body,
 
 .el-main {
   margin-top: 20px;
-  margin-left: 30px;
+  margin-left: 20px;
+  margin-right: 20px;
 }
 
 /* 容器布局占比100% */

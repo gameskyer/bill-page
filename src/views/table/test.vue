@@ -1,81 +1,69 @@
 <template>
-  <el-table-v2 :columns="columns" :data="data" :row-class="rowClass" :width="700" :height="400" />
+  <el-row v-for="(o, index) in 2" :key="o">
+    <el-col v-for="(o, index) in 5" :key="o" :span="3" :offset="index > 0 ? 2 : 1">
+      <el-card shadow="hover" :body-style="{ padding: '10px', width: '100px' }">
+        <img src="https://img1.baidu.com/it/u=177648641,3119783561&fm=253&fmt=auto&app=138&f=JPEG?w=150&h=100"
+          class="image" />
+        <div style="padding: 14px">
+          <span>Yummy hamburger</span>
+          <div class="bottom">
+            <!-- <time class="time">{{ currentDate }}</time> -->
+            <el-button text class="button" @click="clickIMG">Operating</el-button>
+            <!-- <el-button text class="button">Operating</el-button> -->
+          </div>
+        </div>
+      </el-card>
+    </el-col>
+  </el-row>
 </template>
 
-<script lang="tsx" setup>
+<script lang="ts" setup>
 import { ref } from 'vue'
-import dayjs from 'dayjs'
-import {
-  ElButton,
-  ElIcon,
-  ElTag,
-  ElTooltip,
-  TableV2FixedDir,
-} from 'element-plus'
-import { Timer } from '@element-plus/icons-vue'
-
-import type { Column, RowClassNameGetter } from 'element-plus'
-
-let id = 0
-
-const dataGenerator = () => ({
-  id: `random-id-${++id}`,
-  name: 'Tom',
-  date: '2020-10-1',
-})
-
-const columns: Column<any>[] = [
-  {
-    key: 'date',
-    title: 'Date',
-    dataKey: 'date',
-    width: 150,
-    cellRenderer: ({ cellData: date }) => (
-      <ElTooltip content={dayjs(date).format('YYYY/MM/DD')}>
-        {
-          <span class="flex items-center">
-            <ElIcon class="mr-3">
-              <Timer />
-            </ElIcon>
-            {dayjs(date).format('YYYY/MM/DD')}
-          </span>
-        }
-      </ElTooltip>
-    ),
-  },
-  {
-    key: 'name',
-    title: 'Name',
-    dataKey: 'name',
-    width: 150,
-    align: 'center',
-    cellRenderer: ({ cellData: name }) => <ElTag>{name}</ElTag>,
-  },
-  {
-    key: 'operations',
-    title: 'Operations',
-    cellRenderer: () => (
-      <>
-        <ElButton size="small">Edit</ElButton>
-        <ElButton size="small" type="danger">
-          Delete
-        </ElButton>
-      </>
-    ),
-    width: 150,
-    align: 'center',
-    flexGrow: 1,
-  },
-]
-
-const data = ref(Array.from({ length: 200 }).map(dataGenerator))
-
-const rowClass = ({ rowIndex }: Parameters<RowClassNameGetter<any>>[0]) => {
-  if (rowIndex % 10 === 5) {
-    return 'bg-red-100'
-  } else if (rowIndex % 10 === 0) {
-    return 'bg-blue-200'
-  }
-  return ''
+const clickIMG = () => {
+  console.log(111)
 }
+
+const currentDate = ref(new Date())
 </script>
+
+<style>
+.time {
+  font-size: 12px;
+  color: #999;
+}
+
+.bottom {
+  margin-top: 13px;
+  line-height: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.el-row {
+  margin-bottom: 20px;
+}
+
+.el-row:last-child {
+  margin-bottom: 0;
+}
+
+.el-col {
+  border-radius: 4px;
+}
+
+.grid-content {
+  border-radius: 4px;
+  min-height: 36px;
+}
+
+.button {
+  padding: 0;
+  min-height: auto;
+}
+
+.image {
+  width: 100%;
+  display: block;
+}
+</style>
