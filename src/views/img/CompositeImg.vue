@@ -52,9 +52,11 @@ export default {
     var categoryChart = echarts.init(chartDoms);
     var categoryOption;
 
-    const category = [];
+    const category = ref([]);
+    const categoryAxis = ref([]);
+
     for (let i = 0; i < 5; ++i) {
-      category.push(Math.round(Math.random() * 200));
+      category.value.push(Math.round(Math.random() * 200));
     }
     categoryOption = {
       xAxis: {
@@ -62,7 +64,7 @@ export default {
       },
       yAxis: {
         type: 'category',
-        data: ['A', 'B', 'C', 'D', 'E'],
+        data: categoryAxis.value,
         inverse: true,
         animationDuration: 300,
         animationDurationUpdate: 300,
@@ -73,7 +75,7 @@ export default {
           realtimeSort: true,
           name: 'X',
           type: 'bar',
-          data: category,
+          data: category.value,
           label: {
             show: true,
             position: 'right',
@@ -89,29 +91,29 @@ export default {
       animationEasing: 'linear',
       animationEasingUpdate: 'linear'
     };
-    function run () {
-      for (var i = 0; i < category.length; ++i) {
-        if (Math.random() > 0.9) {
-          category[i] += Math.round(Math.random() * 2000);
-        } else {
-          category[i] += Math.round(Math.random() * 200);
-        }
-      }
-      categoryChart.setOption({
-        series: [
-          {
-            type: 'bar',
-            category
-          }
-        ]
-      });
-    }
-    setTimeout(function () {
-      run();
-    }, 0);
-    setInterval(function () {
-      run();
-    }, 3000);
+    // function run () {
+    //   for (var i = 0; i < category.value.length; ++i) {
+    //     if (Math.random() > 0.9) {
+    //       category.value[i] += Math.round(Math.random() * 2000);
+    //     } else {
+    //       category.value[i] += Math.round(Math.random() * 200);
+    //     }
+    //   }
+    //   categoryChart.setOption({
+    //     series: [
+    //       {
+    //         type: 'bar',
+    //         data: category.value,
+    //       }
+    //     ]
+    //   });
+    // }
+    // setTimeout(function () {
+    //   run();
+    // }, 0);
+    // setInterval(function () {
+    //   run();
+    // }, 3000);
 
     categoryOption && categoryChart.setOption(categoryOption);
 
@@ -165,7 +167,6 @@ export default {
 
     var option;
     setTimeout(() => {
-      console.log("seriesData:", seriesData)
       option = {
         toolbox: {
           feature: {
@@ -212,6 +213,8 @@ export default {
         }).then((res) => {
 
           GetPercentage(event.name).then((res) => {
+            categoryAxis.value = []
+            category.value = []
             for (var i = 0; i < res.data.length; i++) {
               var name = res.data[i].billTypeName
               res.data[i].color = typeColor.get(name)
@@ -222,6 +225,8 @@ export default {
           var respJSON = res.data;
           for (var i = 0; i < respJSON.length; i++) {
             var ob2 = new Object();
+            categoryAxis.value.push(respJSON[i].billTypeName)
+            category.value.push(respJSON[i].billPrice)
             ob2.value = respJSON[i].billPrice;
             ob2.name = respJSON[i].billTypeName;
             ob2.itemStyle = { color: typeColor.get(respJSON[i].billTypeName) }
@@ -229,6 +234,22 @@ export default {
             respData.push(ob2);
           }
           data3.value = respData;
+        });
+        categoryChart.setOption({
+          yAxis: {
+            type: 'category',
+            data: categoryAxis.value,
+            inverse: true,
+            animationDuration: 300,
+            animationDurationUpdate: 300,
+            // max: 2 // only the largest 3 bars will be displayed
+          },
+          series: [
+            {
+              type: 'bar',
+              data: category.value,
+            }
+          ]
         });
         myChart.setOption({
           series: [
