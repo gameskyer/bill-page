@@ -5,10 +5,9 @@
 
 <script>
 import * as echarts from 'echarts';
-import axios from 'axios';
 import router from '../../router';
 import { GetCookieImtData, GetBillDateList } from '@/js/api/billApi'
-import { ref, unref } from 'vue';
+import { ref } from 'vue';
 import { typeColor } from '@/js/api/commonUtil';
 
 export default {
@@ -43,7 +42,6 @@ export default {
     },
     drawLine (data) {
       GetCookieImtData(data).then(function (response) {
-        var echartsData = '[';
         var respData = new Array();
         // var respJSON = res.data;
         response.data.forEach((element) => {
@@ -54,22 +52,6 @@ export default {
           ob2.label = { color: typeColor.get(element.billTypeName) }
           respData.push(ob2);
         })
-        console.log(respData)
-        // response.data.forEach((element) => {
-        //   let node =
-        //     '{"value":' +
-        //     element.billPrice +
-        //     ',"name":"' +
-        //     element.billTypeName +
-        //     '"},';
-        //   echartsData += node;
-        // });
-        // echartsData = echartsData.substring(
-        //   0,
-        //   echartsData.length - 1
-        // );
-        // echartsData = echartsData + ']';
-        // let jsonData = JSON.parse(echartsData);
 
         // 基于准备好的dom，初始化echarts实例
         let myChart = echarts.init(
@@ -109,7 +91,6 @@ export default {
           ],
         });
         myChart.on('click', function (parm) {
-          console.log('parm', parm.name);
           router.push({
             name: 'BillByType',
             params: { type: parm.name },

@@ -10,7 +10,6 @@ const service = axios.create({
 
 // request interceptor
 service.interceptors.request.use(function (config) {
-  console.log("请求", config)
   //在发送请求之前做某件事
 
   // 在发送请求之前做些什么
@@ -23,7 +22,6 @@ service.interceptors.request.use(function (config) {
 
 // response interceptor
 service.interceptors.response.use(function (response) {
-  console.log("响应值", response)
   // 2xx 范围内的状态码都会触发该函数。
   // 对响应数据做点什么
   return response;

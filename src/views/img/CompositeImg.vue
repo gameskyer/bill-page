@@ -129,7 +129,7 @@ export default {
     const json2 = unref(data);
     var dom = document.getElementById('myChart');
     var myChart = echarts.init(dom);
-    var app = {};
+    
 
     var seriesData = new Array();
     var datas = json2.billStackedLineType;

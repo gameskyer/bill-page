@@ -1,4 +1,4 @@
-# element-plus-demo
+# bill-vue
 
 ## Project setup
 ```

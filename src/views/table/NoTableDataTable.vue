@@ -89,12 +89,10 @@ const ruleForm = reactive({
 });
 const options = ref<any>([]);
 const handleSizeChange = (val: number) => {
-	console.log('触发了handleSizeChange');
 	param.results = val;
 	getBillData(param);
 };
 const handleCurrentChange = (val: number) => {
-	console.log('触发了handleCurrentChange');
 	param.page = val;
 	getBillData(param);
 };
@@ -105,7 +103,6 @@ GetBillTypeList().then((res) => {
 		let obj: any = new Object();
 		obj.value = res.data[key].billType;
 		obj.label = res.data[key].billTypeName;
-		console.log(obj);
 
 		arr.push(obj);
 	});
@@ -117,7 +114,6 @@ const select = () => {
 };
 
 const resetForm = (formEl: FormInstance | undefined) => {
-	console.log('触发了resetForm');
 	if (!formEl) return;
 	formEl.resetFields();
 	getBillData(param);
@@ -140,7 +136,6 @@ const submitFrom = async () => {
 		return;
 	}
 	await UpdateBillType(updataParam).then(() => {
-		console.log(updataParam);
 		getBillData(param);
 	});
 };
@@ -173,7 +168,6 @@ const param = reactive({
 });
 getBillData(param);
 function getBillData(param: any) {
-	console.log('触发了getBillData', param);
 
 	GetNoTypeData(param).then((res: any) => {
 		total.value = res.data.total;

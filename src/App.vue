@@ -36,13 +36,32 @@ import Aside from '@/main/Aside.vue'
 import { computed, ref, reactive } from 'vue'
 
 import { ElConfigProvider } from "element-plus"
-import zhCn from "element-plus/lib/locale/lang/zh-cn"
+import zhCn from 'element-plus/es/locale/lang/zh-cn'
 const language = ref('zh-cn')
 const locale = computed(() => (language.value === 'zh-cn'))
 const config = ref({
   autoInsertSpace: true,
 })
-
+// 解决ERROR ResizeObserver loop completed with undelivered notifications.
+// app.vue写在script里面  main.js写在app挂在完之后
+const debounce = (fn, delay) => {
+  let timer
+   return (...args) => {
+     if (timer) {
+       clearTimeout(timer)
+     }
+     timer = setTimeout(() => {
+       fn(...args)
+     }, delay)
+   }
+}
+const _ResizeObserver = window.ResizeObserver;
+window.ResizeObserver = class ResizeObserver extends _ResizeObserver{
+   constructor(callback) {
+     callback = debounce(callback, 200);
+     super(callback);
+   }
+}
 </script>
 
 <style >

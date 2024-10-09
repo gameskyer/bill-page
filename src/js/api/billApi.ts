@@ -67,14 +67,7 @@ export function GetBillStackedLine() {
   });
 }
 
-// export function GetNoTypeData(params: Object) {
-//   console.log("参数", params)
-//   return axios.post('/table/getNoTypeData', null, {
-//     headers: { 'Content-Type': 'application/json' } //加上这个
-//   })
-// }
 export function GetNoTypeData(params: Object) {
-  console.log(params)
   return axios({
     method: 'post',
     url: '/table/getNoTypeData',

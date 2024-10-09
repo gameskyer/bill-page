@@ -41,7 +41,7 @@
   <div style="height: 75%">
     <el-auto-resizer>
       <template #default="{ height, width }">
-        <el-table-v2 :columns="columns" :data="tableData" :width="width" :height="height" :fixed="true" />
+        <el-table-v2 :columns="columns" :data="tableData" :width="width" :height="height" fixed />
       </template>
     </el-auto-resizer>
   </div>
@@ -175,7 +175,6 @@ const handleDelete = ((row: any) => {
   dialogVisible.value = true
   rowData.value = row.rowData
 
-  // console.log(row)
 })
 
 GetBillDateList().then((res) => {
@@ -187,7 +186,6 @@ GetBillDateList().then((res) => {
   });
 
   dateList.value = arr;
-  console.log(dateList.value)
 });
 const value = ref([])
 const DeleteData = (rowData: string) => {
@@ -202,7 +200,6 @@ const handleChange = (value: any) => {
     date += aa
   }
   ruleForm.date = date as unknown as string
-  console.log(value[1])
 }
 const props = {
   expandTrigger: 'hover' as const,

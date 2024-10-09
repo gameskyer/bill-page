@@ -1,8 +1,9 @@
+const { defineConfig } = require('@vue/cli-service')
 const path = require('path');
 const resolve = (dir) => {
   return path.join(__dirname, dir);
 };
-module.exports = {
+module.exports = defineConfig({
   lintOnSave: false, //是否在保存时检查
   devServer: {
     host: 'localhost', //本机ip
@@ -34,4 +35,5 @@ module.exports = {
       patterns: [resolve('path/to/global.less')],
     },
   },
-};
+  transpileDependencies: true,
+})
