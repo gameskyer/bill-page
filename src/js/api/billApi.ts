@@ -1,5 +1,4 @@
 import axios from '@/js/http/axios_http';
-import qs from 'qs'
 
 export function GetPercentage(month: String) {
   if (month != "") {

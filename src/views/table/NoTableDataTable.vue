@@ -68,7 +68,7 @@
 
 <script lang="tsx" setup>
 import { ref, unref, reactive } from 'vue';
-import { ElCheckbox, ElMessage, TableV2SortOrder } from 'element-plus';
+import { ElCheckbox, ElMessage } from 'element-plus';
 import {
 	GetNoTypeData,
 	GetBillTypeList,
@@ -99,10 +99,11 @@ const handleCurrentChange = (val: number) => {
 
 GetBillTypeList().then((res) => {
 	let arr = new Array<any>();
-	Object.keys(res.data).forEach((key) => {
+
+	Object.keys(res).forEach((key) => {
 		let obj: any = new Object();
-		obj.value = res.data[key].billType;
-		obj.label = res.data[key].billTypeName;
+		obj.value = res[key].billType;
+		obj.label = res[key].billTypeName;
 
 		arr.push(obj);
 	});
@@ -170,17 +171,18 @@ getBillData(param);
 function getBillData(param: any) {
 
 	GetNoTypeData(param).then((res: any) => {
-		total.value = res.data.total;
-		res.data.bill.forEach((element: any) => {
+		total.value = res.total;
+		res.bill.forEach((element: any) => {
 			element.checked = false;
 		});
-		tableData.value = res.data.bill;
+		tableData.value = res.bill;
 	});
 }
 
 type SelectionCellProps = {
 	value: boolean;
 	intermediate?: boolean;
+	// eslint-disable-next-line no-unused-vars
 	onChange: (value: CheckboxValueType) => void;
 };
 

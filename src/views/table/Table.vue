@@ -162,10 +162,12 @@ const dateList = ref<any>([]);
 
 GetBillTypeList().then((res) => {
   let arr = new Array();
-  Object.keys(res.data).forEach((key) => {
+
+  Object.keys(res).forEach((key) => {
+
     let obj: any = new Object();
-    obj.value = res.data[key].billType;
-    obj.label = res.data[key].billTypeName;
+    obj.value = res[key].billType;
+    obj.label = res[key].billTypeName;
     arr.push(obj);
   });
   options.value = arr;
@@ -179,9 +181,9 @@ const handleDelete = ((row: any) => {
 
 GetBillDateList().then((res) => {
   let arr = new Array();
-  Object.keys(res.data).forEach((key) => {
+  Object.keys(res).forEach((key) => {
     let obj: any = new Object();
-    obj = res.data[key];
+    obj = res[key];
     arr.push(obj);
   });
 
@@ -216,10 +218,10 @@ const resetForm = (formEl: FormInstance | undefined) => {
 
 function getBillData(param: Object) {
   SelectBill(param).then((res) => {
-    tableData.value = res.data.bill;
-    total.value = res.data.total;
-    priceAvg.value = res.data.priceAvg;
-    priceSum.value = res.data.priceSum;
+    tableData.value = res.bill;
+    total.value = res.total;
+    priceAvg.value = res.priceAvg;
+    priceSum.value = res.priceSum;
   });
 }
 </script>

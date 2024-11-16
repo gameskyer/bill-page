@@ -13,7 +13,7 @@
           <el-menu-item index="2-2" route="/noTypeTable">未分类数据</el-menu-item>
         </el-menu-item-group>
         <el-menu-item-group title="Group 2">
-          <el-menu-item index="2-3" route="/test">Option 3</el-menu-item>
+          <el-menu-item index="2-3" route="/imageMain">Option 3</el-menu-item>
         </el-menu-item-group>
       </el-sub-menu>
       <el-sub-menu index="3">

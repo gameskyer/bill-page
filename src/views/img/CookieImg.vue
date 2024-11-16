@@ -16,7 +16,7 @@ export default {
     const dateList = ref();
     GetBillDateList().then((res) => {
       let arr = new Array();
-      for (var data of res.data) {
+      for (var data of res) {
         let obj = new Object();
         obj = data
         arr.push(obj);
@@ -43,7 +43,7 @@ export default {
     drawLine (data) {
       GetCookieImtData(data).then(function (response) {
         var respData = new Array();
-        // var respJSON = res.data;
+        // var respJSON = res;
         response.data.forEach((element) => {
           var ob2 = new Object();
           ob2.value = element.billPrice;

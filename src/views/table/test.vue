@@ -1,15 +1,15 @@
 <template>
-  <el-row v-for="(o, index) in 2" :key="o">
-    <el-col v-for="(o, index) in 5" :key="o" :span="3" :offset="index > 0 ? 2 : 1">
-      <el-card shadow="hover" :body-style="{ padding: '10px', width: '100px' }">
-        <img src="https://img1.baidu.com/it/u=177648641,3119783561&fm=253&fmt=auto&app=138&f=JPEG?w=150&h=100"
-          class="image" />
+  <el-row v-for="(o, index) in 4" :key="o">
+    <el-col v-for="(o, index) in 4" :key="o" :span="4" :offset="index > 0 ? 2 : 1" style="width: 100%;">
+      <el-card shadow="hover" :body-style="{ padding: '5px', width: '100%'}">
+        <el-image style="width: 200px; height: 200px" src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png" fit="fill" />
+
+        <!-- <img src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png"
+          class="image" /> -->
         <div style="padding: 14px">
           <span>Yummy hamburger</span>
           <div class="bottom">
-            <!-- <time class="time">{{ currentDate }}</time> -->
             <el-button text class="button" @click="clickIMG">Operating</el-button>
-            <!-- <el-button text class="button">Operating</el-button> -->
           </div>
         </div>
       </el-card>

@@ -4,7 +4,11 @@ const resolve = (dir) => {
   return path.join(__dirname, dir);
 };
 module.exports = defineConfig({
-  lintOnSave: false, //是否在保存时检查
+  lintOnSave: false,
+  //   client: { 
+  //     overlay: false  // 关闭浏览器中的红色错误提示层
+  // },
+  //是否在保存时检查
   devServer: {
     host: 'localhost', //本机ip
     port: 8081, //本机端口
@@ -24,10 +28,8 @@ module.exports = defineConfig({
     //     }*/
     // 	},
     // },
-    overlay: {
-      warning: false,
-      errors: true,
-    },
+   
+
   },
   pluginOptions: {
     'style-resources-loader': {

@@ -27,7 +27,8 @@
 
 <script>
 import * as echarts from 'echarts';
-import axios from 'axios';
+import axios from '@/js/http/axios_http';
+
 import { ref, unref, reactive } from 'vue';
 import { GetBillStackedLine, GetPercentage } from '@/js/api/billApi';
 import { typeColor } from '@/js/api/commonUtil';
@@ -35,11 +36,12 @@ export default {
   setup () {
     const datas = reactive({ arr: [] });
     GetPercentage("").then((res) => {
-      for (var i = 0; i < res.data.length; i++) {
-        var name = res.data[i].billTypeName
-        res.data[i].color = typeColor.get(name)
+      console.log(res)
+      for (var i = 0; i < res.length; i++) {
+        var name = res[i].billTypeName
+        res[i].color = typeColor.get(name)
       }
-      datas.arr = res.data;
+      datas.arr = res;
     });
     return datas;
   },
@@ -91,29 +93,7 @@ export default {
       animationEasing: 'linear',
       animationEasingUpdate: 'linear'
     };
-    // function run () {
-    //   for (var i = 0; i < category.value.length; ++i) {
-    //     if (Math.random() > 0.9) {
-    //       category.value[i] += Math.round(Math.random() * 2000);
-    //     } else {
-    //       category.value[i] += Math.round(Math.random() * 200);
-    //     }
-    //   }
-    //   categoryChart.setOption({
-    //     series: [
-    //       {
-    //         type: 'bar',
-    //         data: category.value,
-    //       }
-    //     ]
-    //   });
-    // }
-    // setTimeout(function () {
-    //   run();
-    // }, 0);
-    // setInterval(function () {
-    //   run();
-    // }, 3000);
+
 
     categoryOption && categoryChart.setOption(categoryOption);
 
@@ -124,7 +104,7 @@ export default {
 
     const data = ref();
     await GetBillStackedLine().then((res) => {
-      data.value = res.data;
+      data.value = res;
     });
     const json2 = unref(data);
     var dom = document.getElementById('myChart');
@@ -213,16 +193,20 @@ export default {
         }).then((res) => {
 
           GetPercentage(event.name).then((res) => {
+            console.log(res)
+
             categoryAxis.value = []
             category.value = []
-            for (var i = 0; i < res.data.length; i++) {
-              var name = res.data[i].billTypeName
-              res.data[i].color = typeColor.get(name)
+            for (var i = 0; i < res.length; i++) {
+              var name = res[i].billTypeName
+              res[i].color = typeColor.get(name)
             }
-            datas.arr = res.data
+            datas.arr = res
           });
           var respData = new Array();
-          var respJSON = res.data;
+          var respJSON = res;
+          console.log(respJSON)
+
           for (var i = 0; i < respJSON.length; i++) {
             var ob2 = new Object();
             categoryAxis.value.push(respJSON[i].billTypeName)

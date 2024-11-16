@@ -3,7 +3,7 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 
 import Table from '../views/table/Table.vue';
 import NoTypeTable from '../views/table/NoTableDataTable.vue';
-import test from '../views/table/test.vue';
+import imageMain from '../views/table/imageMain.vue';
 import CompositeImg from '@/views/img/CompositeImg.vue';
 const routes: Array<RouteRecordRaw> = [
   {
@@ -33,9 +33,9 @@ const routes: Array<RouteRecordRaw> = [
     component: NoTypeTable,
   },
   {
-    path: '/test',
-    name: 'test',
-    component: test,
+    path: '/imageMain',
+    name: 'imageMain',
+    component: imageMain,
   },
 ];
 
