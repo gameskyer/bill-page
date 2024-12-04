@@ -1,9 +1,8 @@
-<!-- User.vue -->
 <template>
-    <div>
-        User {{ $route.params.id }}
-    </div>
-  </template>
+  <div class="demo-image__lazy">
+    <el-image v-for="url in urls" :key="url" :src="url" lazy />
+  </div>
+</template>
 
 <script lang="ts">
 import {GetImageList} from "@/js/api/imageApi"
@@ -11,17 +10,37 @@ import router from "@/router"
 import { ref } from 'vue'
 
 export default {
-    setup () {
-        const images  = ref([])
-var vm = this
-console.log(this)
-console.log(vm.$route.params.id)
-GetImageList("vgjDqtOvYB").then((res:any) => {
-    images.value = res
-    console.log(images.value)
+    created () {
+
+        var id = this.$route.params.id
+ console.log()
+GetImageList(id).then((res:any) => {
+
+    this.urls = res
 })
+    },
+        data() {
+      return {
+        urls: []
+        
+      }
     }
 }
 
 
 </script>
+
+<style scoped>
+.demo-image__lazy {
+  height: 100%;
+  overflow-y: auto;
+}
+.demo-image__lazy .el-image {
+  display: block;
+  min-height: 200px;
+  margin-bottom: 10px;
+}
+.demo-image__lazy .el-image:last-child {
+  margin-bottom: 0;
+}
+</style>
