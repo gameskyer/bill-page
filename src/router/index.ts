@@ -37,6 +37,12 @@ const routes: Array<RouteRecordRaw> = [
     name: 'imageMain',
     component: imageMain,
   },
+  {
+    path: '/imageView/:id',
+    name: 'imageView',
+    component: () =>
+      import(/* webpackChunkName: "about" */ '@/views/table/ImageView.vue'),
+  },
 ];
 
 const router = createRouter({

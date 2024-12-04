@@ -8,3 +8,10 @@ export function GetImageSence() {
       });
   }
   
+export function GetImageList(id:string){
+
+  return axios({
+    method: 'post',
+    url: '/image/getImage/'+id
+  });
+}

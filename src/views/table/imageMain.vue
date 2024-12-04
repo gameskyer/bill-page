@@ -4,9 +4,9 @@
     <el-card v-for="i in sences.length" :key="i" class="box-card" :span="4" :offset="i > 0 ? 2 : 1" style="width: 250px">
       <el-image style="width: 200px; height: 200px" src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png" fit="fill" />
       <div style="padding: 14px">
-        <span>{{sences[i-1]}}</span>
+        <span>{{sences[i-1].scene}}</span>
         <div class="bottom">
-          <el-button text class="button" @click="clickIMG">Operating</el-button>
+          <el-button text class="button" @click="clickIMG(sences[i-1].id)">Operating</el-button>
         </div>
       </div>
     </el-card>
@@ -16,8 +16,10 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
 import {GetImageSence} from "@/js/api/imageApi"
-const clickIMG = () => {
-  console.log(111)
+import router from "@/router"
+const clickIMG = (id:string) => {
+  router.push({ path: '/imageView/'+id })
+  console.log(id)
 }
 const sences  = ref([])
 GetImageSence().then((res:any) => {
