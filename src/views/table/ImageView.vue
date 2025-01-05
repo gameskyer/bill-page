@@ -1,6 +1,6 @@
 <template>
   <div class="demo-image__lazy">
-    <el-image v-for="url in urls" :key="url" :src="url" lazy />
+    <el-image v-for="url in urls" :key="url" :src="url"  />
   </div>
 </template>
 
@@ -32,7 +32,9 @@ GetImageList(id).then((res:any) => {
 
 <style scoped>
 .demo-image__lazy {
+  margin: 0 auto;
   height: 100%;
+  width: 50%;
   overflow-y: auto;
 }
 .demo-image__lazy .el-image {
