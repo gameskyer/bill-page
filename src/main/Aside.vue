@@ -14,7 +14,7 @@
         </el-menu-item-group>
         <el-menu-item-group title="Group 2">
           <el-menu-item index="2-3" route="/imageMain">Option 3</el-menu-item>
-          <el-menu-item index="2-4" route="/imageContent">Option 4</el-menu-item>
+          <el-menu-item index="2-4" route="/sceneTagManage">Option 4</el-menu-item>
         </el-menu-item-group>
       </el-sub-menu>
       <el-sub-menu index="3">

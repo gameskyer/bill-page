@@ -28,7 +28,7 @@
 			<el-button type="primary" :icon="Search" circle @click="select" />
 			<el-button
 				type="info"
-				:icon="CircleCloseFilled"
+				:icon="Delete"
 				@click="resetForm(ruleFormRef)"
 				circle
 			/>
@@ -77,7 +77,7 @@ import {
 import type { FunctionalComponent } from 'vue';
 import type { CheckboxValueType, Column } from 'element-plus';
 import type { FormInstance } from 'element-plus';
-import { Search, Check, CircleCloseFilled } from '@element-plus/icons-vue';
+import { Search, Check, Delete } from '@element-plus/icons-vue';
 
 const total = ref();
 const currentPage = ref(1);
@@ -132,7 +132,7 @@ const submitFrom = async () => {
 	});
 	updataParam.id = ids;
 	updataParam.billType = ruleForm.billTypes;
-	if (updataParam.billType == undefined) {
+	if (updataParam.billType == undefined || updataParam.billType == '') {
 		ElMessage.error('请选择类型.');
 		return;
 	}
@@ -182,7 +182,6 @@ function getBillData(param: any) {
 type SelectionCellProps = {
 	value: boolean;
 	intermediate?: boolean;
-	// eslint-disable-next-line no-unused-vars
 	onChange: (value: CheckboxValueType) => void;
 };
 
@@ -192,11 +191,7 @@ const SelectionCell: FunctionalComponent<SelectionCellProps> = ({
 	onChange,
 }) => {
 	return (
-		<ElCheckbox
-			onChange={onChange}
-			modelValue={value}
-			indeterminate={intermediate}
-		/>
+		<ElCheckbox onChange={onChange} modelValue={value} indeterminate={intermediate}/>
 	);
 };
 

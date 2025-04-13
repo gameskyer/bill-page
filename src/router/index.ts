@@ -3,8 +3,9 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 
 import Table from '../views/table/Table.vue';
 import NoTypeTable from '../views/table/NoTableDataTable.vue';
-import imageMain from '../views/table/imageMain.vue';
+import imageMain from '../views/scene/imageMain.vue';
 import CompositeImg from '@/views/img/CompositeImg.vue';
+import sceneTagManage from '@/views/scene/sceneTagMange.vue';
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/compositeImg',
@@ -41,14 +42,19 @@ const routes: Array<RouteRecordRaw> = [
     path: '/imageContent/:id',
     name: 'imageContent',
     component: () =>
-      import(/* webpackChunkName: "about" */ '@/views/table/imageContent.vue'),
+      import(/* webpackChunkName: "about" */ '@/views/scene/imageContent.vue'),
   },
   {
     path: '/imageView/:id',
     name: 'imageView',
     component: () =>
-      import(/* webpackChunkName: "about" */ '@/views/table/ImageView.vue'),
+      import(/* webpackChunkName: "about" */ '@/views/scene/ImageView.vue'),
   },
+  {
+    path: '/sceneTagManage',
+    name: 'sceneTagManage',
+    component: sceneTagManage,
+  }
 ];
 
 const router = createRouter({

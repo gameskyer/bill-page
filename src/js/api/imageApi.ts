@@ -23,3 +23,10 @@ export function GetSceneContent(id:string){
     url: '/image/getScene/'+id
   });
 }
+
+export function GetSceneTagList(){
+  return axios({
+    method: 'get',
+    url: '/image/getSceneTagList'
+  });
+}
