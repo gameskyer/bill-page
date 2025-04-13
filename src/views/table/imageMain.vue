@@ -20,7 +20,7 @@ import { ref } from 'vue'
 import {GetImageSence} from "@/js/api/imageApi"
 import router from "@/router"
 const clickIMG = (id:string) => {
-  router.push({ path: '/imageView/'+id })
+  router.push({ path: '/imageContent/'+id })
   console.log(id)
 }
 const sences  = ref([])

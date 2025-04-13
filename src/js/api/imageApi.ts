@@ -15,3 +15,11 @@ export function GetImageList(id:string){
     url: '/image/getImage/'+id
   });
 }
+
+export function GetSceneContent(id:string){
+
+  return axios({
+    method: 'post',
+    url: '/image/getScene/'+id
+  });
+}

@@ -38,6 +38,12 @@ const routes: Array<RouteRecordRaw> = [
     component: imageMain,
   },
   {
+    path: '/imageContent/:id',
+    name: 'imageContent',
+    component: () =>
+      import(/* webpackChunkName: "about" */ '@/views/table/imageContent.vue'),
+  },
+  {
     path: '/imageView/:id',
     name: 'imageView',
     component: () =>
