@@ -14,7 +14,7 @@ export default {
     var id = this.$route.params.id;
     console.log();
     GetImageList(id).then((res: any) => {
-      this.urls = res;
+      this.urls = res.data;
     });
   },
   data() {

@@ -85,7 +85,7 @@ export default {
     var id = this.$route.params.id;
     console.log();
     GetSceneContent(id).then((res) => {
-      this.scene = res;
+      this.scene = res.data;
     });
   },
   data() {

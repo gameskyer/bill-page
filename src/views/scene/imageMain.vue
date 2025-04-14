@@ -1,7 +1,7 @@
 <template>
   <!-- <el-row v-for="(o) in 4" :key="o"> -->
   <el-space wrap :size="70">
-    <el-card v-for="i in sences.length" :key="i" class="box-card" :span="4" :offset="i > 0 ? 2 : 1" style="width: 250px;"@click="clickIMG(sences[i-1].id)">
+    <el-card v-for="i in sences.length" :key="i" class="box-card" :span="4" :offset="i > 0 ? 2 : 1" style="width: 250px;" @click="clickIMG(sences[i-1].id)">
       <el-image style="width: 200px; " :src=sences[i-1].cover fit="fill" />
       <div style="padding: 14px">
         <span>{{sences[i-1].scene}}</span>
@@ -31,7 +31,7 @@ interface Scene {
 
 const sences = ref<Scene[]>([])
 GetImageSence().then((res:any) => {
-  sences.value = res
+  sences.value = res.data
 })
 const currentDate = ref(new Date())
 </script>

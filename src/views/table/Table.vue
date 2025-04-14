@@ -160,14 +160,14 @@ const handleCurrentChange = (val: number) => {
 const options = ref<any>([]);
 const dateList = ref<any>([]);
 
-GetBillTypeList().then((res) => {
+GetBillTypeList().then((res:any) => {
   let arr = new Array();
-
-  Object.keys(res).forEach((key) => {
+  let list = res.data
+  Object.keys(list).forEach((key) => {
 
     let obj: any = new Object();
-    obj.value = res[key].billType;
-    obj.label = res[key].billTypeName;
+    obj.value = list[key].billType;
+    obj.label = list[key].billTypeName;
     arr.push(obj);
   });
   options.value = arr;
@@ -179,11 +179,12 @@ const handleDelete = ((row: any) => {
 
 })
 
-GetBillDateList().then((res) => {
+GetBillDateList().then((res:any) => {
   let arr = new Array();
-  Object.keys(res).forEach((key) => {
+  let list = res.data
+  Object.keys(list).forEach((key) => {
     let obj: any = new Object();
-    obj = res[key];
+    obj = list[key];
     arr.push(obj);
   });
 
@@ -218,10 +219,10 @@ const resetForm = (formEl: FormInstance | undefined) => {
 
 function getBillData(param: Object) {
   SelectBill(param).then((res) => {
-    tableData.value = res.bill;
-    total.value = res.total;
-    priceAvg.value = res.priceAvg;
-    priceSum.value = res.priceSum;
+    tableData.value = res.data.bill;
+    total.value = res.data.total;
+    priceAvg.value = res.data.priceAvg;
+    priceSum.value = res.data.priceSum;
   });
 }
 </script>

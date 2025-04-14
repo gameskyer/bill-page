@@ -97,13 +97,13 @@ const handleCurrentChange = (val: number) => {
 	getBillData(param);
 };
 
-GetBillTypeList().then((res) => {
+GetBillTypeList().then((res:any) => {
 	let arr = new Array<any>();
 
-	Object.keys(res).forEach((key) => {
+	Object.keys(res.data).forEach((key) => {
 		let obj: any = new Object();
-		obj.value = res[key].billType;
-		obj.label = res[key].billTypeName;
+		obj.value = res.data[key].billType;
+		obj.label = res.data[key].billTypeName;
 
 		arr.push(obj);
 	});
@@ -171,11 +171,11 @@ getBillData(param);
 function getBillData(param: any) {
 
 	GetNoTypeData(param).then((res: any) => {
-		total.value = res.total;
-		res.bill.forEach((element: any) => {
+		total.value = res.data.total;
+		res.data.bill.forEach((element: any) => {
 			element.checked = false;
 		});
-		tableData.value = res.bill;
+		tableData.value = res.data.bill;
 	});
 }
 

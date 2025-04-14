@@ -30,3 +30,21 @@ export function GetSceneTagList(){
     url: '/image/getSceneTagList'
   });
 }
+
+export function DeleteSceneTag(ids:Array<Number>){
+  return axios({
+    method: 'post',
+    url: '/image/deleteSceneTag',
+    data: ids,
+    headers: { 'content-type': 'application/json' },
+  });
+}
+
+export function AddSceneTag(tag:string){
+  return axios({
+    method: 'post',
+    url: '/image/addSceneTag',
+    data: tag,
+    headers: { 'content-type': 'text/plain' },
+  });
+}
