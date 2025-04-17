@@ -1,31 +1,37 @@
 <template>
 	<el-form :inline="true" class="demo-form-inline">
 		<el-form-item>
-			<el-button type="success" @click="dialogFormVisible = true">新增 <el-icon class="el-icon--right">
+			<el-button type="success" @click="openAddDialog()">新增 <el-icon class="el-icon--right">
 					<CirclePlus />
 				</el-icon></el-button>
-			<el-button type="danger" @click="deleteTag">删除所选 <el-icon class="el-icon--right">
+			<el-button type="danger" @click="openDeletDialog()">删除所选 <el-icon class="el-icon--right">
 					<Delete />
 				</el-icon></el-button>
 		</el-form-item>
 	</el-form>
 
 	<!--弹出框-->
-	<el-dialog v-model="dialogFormVisible" title="新增TAG" width="500">
-    <el-form :model="form">
-      <el-form-item label="TAG名称" :label-width="formLabelWidth">
-        <el-input v-model="form.name" autocomplete="off" />
-      </el-form-item>
-    </el-form>
-    <template #footer>
-      <div class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取消</el-button>
-        <el-button type="primary" @click="insertTag()">
-          确认
-        </el-button>
-      </div>
-    </template>
-  </el-dialog>
+	<el-dialog v-model="dialog.dialogFormVisible" :title="dialog.title" width="500" :center="dialog.isCenter">
+		<el-form :model="form">
+			<el-form-item v-show="dialog.dialogInputVisible" label="TAG名称" :label-width="dialog.formLabelWidth">
+				<el-input v-model="form.name" autocomplete="off" />
+			</el-form-item>
+		</el-form>
+		<div id="deletPrompt" v-show="dialog.showSpan">
+			<span >
+				是否确定删除所选数据？
+			</span>
+		</div>
+
+		<template #footer>
+			<div class="dialog-footer">
+				<el-button @click="closeDialog()">取消</el-button>
+				<el-button type="primary" @click="submitForm()">
+					确认
+				</el-button>
+			</div>
+		</template>
+	</el-dialog>
 
 	<!-- 表格 -->
 	<div style="height: 1000px">
@@ -38,25 +44,96 @@
 
 </template>
 
+<style scoped>
+#deletPrompt {
+	text-align: center;
+}
+</style>
 <script lang="tsx" setup>
 import { ref, unref, reactive } from 'vue';
-import { ElCheckbox, ElMessage } from 'element-plus';
-import { GetSceneTagList, DeleteSceneTag,AddSceneTag } from '@/js/api/imageApi'
+import { ElCheckbox, ElMessage, ElButton } from 'element-plus';
+import { GetSceneTagList, DeleteSceneTag, AddSceneTag } from '@/js/api/imageApi'
 import type { FunctionalComponent } from 'vue';
 import type { CheckboxValueType, Column } from 'element-plus';
 import type { FormInstance } from 'element-plus';
 import { CirclePlus, Delete } from '@element-plus/icons-vue';
+import { de } from 'element-plus/es/locale';
 
+
+
+const submitForm = () =>{
+	//如果弹窗是新增，且输入框不为空，则执行新增操作
+	if (dialog.dialogInputVisible && form.name != '') {
+		insertTag()
+	}else if(numbers.length > 0){
+		deleteTag()
+	}
+	else{
+		deleteTagList()
+	}
+}
 //弹窗事件
+const dialog = reactive({
+	dialogFormVisible: false,
+	dialogInputVisible: true,
+	title: '新增TAG',
+	isCenter: false,
+	formLabelWidth: '140px',
+	showSpan: false,
+});
+const openDeletDialog = () => {
+	dialog.dialogFormVisible = true;
+	dialog.dialogInputVisible = false;
+	dialog.title = '删除所选';
+	dialog.isCenter = true;
+	dialog.showSpan = true;
+};
+const openAddDialog = () => {
+	dialog.dialogFormVisible = true;
+	dialog.dialogInputVisible = true;
+	dialog.title = '新增TAG';
+	dialog.isCenter = false;
+	dialog.showSpan = false;
+};
+const closeDialog = () => {
+	dialog.dialogFormVisible = false;
+	// dialog.dialogInputVisible = true;
+	// dialog.title = '新增TAG';
+	// dialog.isCenter = false;
+	// dialog.showSpan = false;
+	if(numbers.length > 0){
+		numbers = []
+	}
+	if (form.name != '') {
+		form.name = ''
+	}
+};
+const openDeletDialogSingle = (row: any) => {
+	dialog.dialogFormVisible = true;
+	dialog.dialogInputVisible = false;
+	dialog.title = '删除所选';
+	dialog.isCenter = true;
+	dialog.showSpan = true;
+	numbers.push(row.id);
+};
 
-const dialogFormVisible = ref(false)
-const formLabelWidth = '140px'
 const form = reactive({
-  name: '',
+	name: '',
 })
-const insertTag = () =>{
-	dialogFormVisible.value = false
-	AddSceneTag(form.name)
+const insertTag = () => {
+	AddSceneTag(form.name).then((ref: any) => {
+		if (ref.code == 0) {
+			ElMessage.success(ref.message);
+			SceneList();
+			form.name = '';
+			return;
+		}
+		if (ref.code != 0) {
+			ElMessage.error(ref.message);
+			return;
+		}
+	})
+	closeDialog()
 }
 
 //表格
@@ -72,7 +149,21 @@ const columns: Column<any>[] = [
 		key: 'tagName',
 		title: '名称',
 		width: 150,
-	}
+	},
+	{
+		key: 'operations',
+		title: '操作',
+		cellRenderer: ({ rowData }) => (
+			<>
+				<ElButton size="small">修改</ElButton>
+				<ElButton size="small" type="danger" onClick={() => openDeletDialogSingle(rowData)}>
+					删除
+				</ElButton>
+			</>
+		),
+		width: 150,
+		align: 'center',
+	},
 ]
 
 const tableData = ref<any>([Object]);
@@ -92,19 +183,36 @@ function SceneList() {
 	});
 }
 
+let numbers: number[] = [];
 
 const deleteTag = () => {
+	DeleteSceneTag(numbers).then((res: any) => {
+		closeDialog()
+		numbers = [];
+		if (res.code == 0) {
+			ElMessage.success(res.message);
+			SceneList();
+			return;
+		}
+		if (res.code != 0) {
+			ElMessage.error(res.message);
+			return;
+		}
+	});
+
+}
+
+const deleteTagList = () => {
 	const data = unref(tableData);
 	const arr1 = data.filter((row: { checked: boolean }) => {
 		return row.checked == true;
 	});
-	let ids = new Array();
 	arr1.forEach((obj: any) => {
-		ids.push(obj.id);
+		numbers.push(obj.id);
 	});
-	console.log(ids)
-	DeleteSceneTag(ids).then((res: any) => {
-
+	DeleteSceneTag(numbers).then((res: any) => {
+		closeDialog()
+		numbers = [];
 		if (res.code == 0) {
 			ElMessage.success(res.message);
 			tableData.value = data.filter((row: { checked: boolean }) => {
@@ -119,7 +227,7 @@ const deleteTag = () => {
 			ElMessage.error(res.message);
 			return;
 		}
-
+		
 	});
 };
 
