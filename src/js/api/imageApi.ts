@@ -1,10 +1,12 @@
 import axios from '@/js/http/axios_http';
 
 
-export function GetImageSence() {
+export function GetImageSence(pagination:any) {
       return axios({
-        method: 'get',
-        url: '/image/getSceneList'
+        method: 'post',
+        url: '/image/getSceneList',
+        data: pagination,
+        headers: { 'content-type': 'application/json' },
       });
   }
   
@@ -46,5 +48,14 @@ export function AddSceneTag(tag:string){
     url: '/image/addSceneTag',
     data: tag,
     headers: { 'content-type': 'text/plain' },
+  });
+}
+
+export function UpdateSceneTag(tag:any){
+  return axios({
+    method: 'post',
+    url: '/image/updateSceneTag',
+    headers: { 'content-type': 'application/json' },
+    data: tag,
   });
 }

@@ -26,8 +26,11 @@
 		<template #footer>
 			<div class="dialog-footer">
 				<el-button @click="closeDialog()">取消</el-button>
-				<el-button type="primary" @click="submitForm()">
+				<el-button type="primary" v-show="dialog.submit" @click="submitForm()">
 					确认
+				</el-button>
+				<el-button type="primary" v-show="dialog.update" @click="submitUpdateForm()">
+					更新
 				</el-button>
 			</div>
 		</template>
@@ -52,14 +55,35 @@
 <script lang="tsx" setup>
 import { ref, unref, reactive } from 'vue';
 import { ElCheckbox, ElMessage, ElButton } from 'element-plus';
-import { GetSceneTagList, DeleteSceneTag, AddSceneTag } from '@/js/api/imageApi'
+import { GetSceneTagList, DeleteSceneTag, AddSceneTag,UpdateSceneTag } from '@/js/api/imageApi'
 import type { FunctionalComponent } from 'vue';
 import type { CheckboxValueType, Column } from 'element-plus';
-import type { FormInstance } from 'element-plus';
 import { CirclePlus, Delete } from '@element-plus/icons-vue';
-import { de } from 'element-plus/es/locale';
 
 
+const submitUpdateForm = () =>{
+	let formData = {
+		id: form.id,
+		tagName: form.name
+	}
+	UpdateSceneTag(formData).then((ref: any) => {
+		if (ref.code == 0) {
+			ElMessage.success(ref.message);
+			SceneList();
+			form.name = '';
+			form.id = 0;
+			closeDialog()
+			return;
+		}
+		if (ref.code != 0) {
+			ElMessage.error(ref.message);
+			form.name = '';
+			form.id = 0;
+			closeDialog()
+			return;
+		}
+	})
+}
 
 const submitForm = () =>{
 	//如果弹窗是新增，且输入框不为空，则执行新增操作
@@ -80,45 +104,69 @@ const dialog = reactive({
 	isCenter: false,
 	formLabelWidth: '140px',
 	showSpan: false,
+	update: false,
+	submit:true,
 });
+//批量删除弹窗
 const openDeletDialog = () => {
 	dialog.dialogFormVisible = true;
 	dialog.dialogInputVisible = false;
 	dialog.title = '删除所选';
 	dialog.isCenter = true;
 	dialog.showSpan = true;
+	dialog.update = false;
+	dialog.submit = true;
 };
+//新增弹窗
 const openAddDialog = () => {
 	dialog.dialogFormVisible = true;
 	dialog.dialogInputVisible = true;
 	dialog.title = '新增TAG';
 	dialog.isCenter = false;
 	dialog.showSpan = false;
+	dialog.update = false;
+	dialog.submit = true;
 };
+//关闭弹窗
 const closeDialog = () => {
 	dialog.dialogFormVisible = false;
-	// dialog.dialogInputVisible = true;
-	// dialog.title = '新增TAG';
-	// dialog.isCenter = false;
-	// dialog.showSpan = false;
 	if(numbers.length > 0){
 		numbers = []
 	}
 	if (form.name != '') {
 		form.name = ''
+		form.id = 0;
 	}
 };
-const openDeletDialogSingle = (row: any) => {
+//删除单条记录弹出
+const openDeleteDialogSingle = (row: any) => {
 	dialog.dialogFormVisible = true;
 	dialog.dialogInputVisible = false;
 	dialog.title = '删除所选';
 	dialog.isCenter = true;
 	dialog.showSpan = true;
+	dialog.update = false;
+	dialog.submit = true;
 	numbers.push(row.id);
 };
 
+//弹出更新框
+const openUpdateDialogSingle = (row: any) => {
+	dialog.dialogFormVisible = true;
+	dialog.dialogInputVisible = true;
+	dialog.title = '修改TAG';
+	dialog.isCenter = false;
+	dialog.showSpan = false;
+	dialog.update = true;
+	dialog.submit = false;
+	form.name = row.tagName;
+	form.id = row.id;
+};
+
+
 const form = reactive({
 	name: '',
+	id: 0,
 })
 const insertTag = () => {
 	AddSceneTag(form.name).then((ref: any) => {
@@ -155,8 +203,9 @@ const columns: Column<any>[] = [
 		title: '操作',
 		cellRenderer: ({ rowData }) => (
 			<>
-				<ElButton size="small">修改</ElButton>
-				<ElButton size="small" type="danger" onClick={() => openDeletDialogSingle(rowData)}>
+				<ElButton size="small" onClick={() => openUpdateDialogSingle(rowData)}>
+					修改</ElButton>
+				<ElButton size="small" type="danger" onClick={() => openDeleteDialogSingle(rowData)}>
 					删除
 				</ElButton>
 			</>
@@ -171,6 +220,7 @@ SceneList();
 
 function SceneList() {
 	GetSceneTagList().then((res: any) => {
+		tableData.value = res.data;
 		if (res.code != 0) {
 			ElMessage.error(res.message);
 			return;
@@ -179,7 +229,7 @@ function SceneList() {
 			ElMessage.info('暂无数据');
 			return;
 		}
-		tableData.value = res.data;
+		
 	});
 }
 
@@ -210,6 +260,10 @@ const deleteTagList = () => {
 	arr1.forEach((obj: any) => {
 		numbers.push(obj.id);
 	});
+	if (numbers.length == 0) {
+		ElMessage.warning('请至少选择一条数据');
+		return;
+	}
 	DeleteSceneTag(numbers).then((res: any) => {
 		closeDialog()
 		numbers = [];

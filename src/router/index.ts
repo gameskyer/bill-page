@@ -54,7 +54,13 @@ const routes: Array<RouteRecordRaw> = [
     path: '/sceneTagManage',
     name: 'sceneTagManage',
     component: sceneTagManage,
-  }
+  },
+  {
+    path: '/sceneMange',
+    name: 'sceneMange',
+    component: () =>
+      import(/* webpackChunkName: "about" */ '@/views/scene/sceneMange.vue'),
+  },
 ];
 
 const router = createRouter({

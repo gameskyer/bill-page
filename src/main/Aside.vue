@@ -13,8 +13,9 @@
           <el-menu-item index="2-2" route="/noTypeTable">未分类数据</el-menu-item>
         </el-menu-item-group>
         <el-menu-item-group title="Group 2">
-          <el-menu-item index="2-3" route="/imageMain">Option 3</el-menu-item>
-          <el-menu-item index="2-4" route="/sceneTagManage">Option 4</el-menu-item>
+          <el-menu-item index="2-3" route="/imageMain">图片集合</el-menu-item>
+          <el-menu-item index="2-4" route="/sceneTagManage">标签管理</el-menu-item>
+          <el-menu-item index="2-5" route="/sceneMange">图片管理</el-menu-item>
         </el-menu-item-group>
       </el-sub-menu>
       <el-sub-menu index="3">
