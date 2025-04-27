@@ -1,17 +1,43 @@
 <template>
-  <!-- <el-row v-for="(o) in 4" :key="o"> -->
-  <!-- <el-space wrap :size="70">
-    <el-card v-for="i in sences.length" :key="i" class="box-card" :span="4" :offset="i > 0 ? 2 : 1"
-      style="width: 250px;" @click="clickIMG(sences[i - 1].id)">
-      <el-image style="width: 200px; " :src=sences[i-1].cover fit="fill" />
-      <div style="padding: 14px">
-        <span>{{ sences[i - 1].scene }}</span>
-      </div>
-    </el-card> -->
+ <!-- 在template最外层添加dialog -->
+ <el-dialog v-model="dialogVisible" title="编辑场景" width="50%">
+    <el-form :model="formData" label-width="80px">
+      <el-form-item label="场景名称">
+        <el-input v-model="formData.scene" />
+      </el-form-item>
+      <el-form-item label="作者">
+        <el-input v-model="formData.author" />
+      </el-form-item>
+      <el-form-item label="封面图">
+        <el-upload
+          action="/api/upload" 
+          :on-success="handleUploadSuccess"
+          :show-file-list="false"
+        >
+          <el-image 
+            v-if="formData.cover" 
+            :src="formData.cover" 
+            style="width: 100px; height: 100px"
+          />
+          <el-button v-else type="primary">点击上传</el-button>
+        </el-upload>
+      </el-form-item>
+      <el-form-item label="标签">
+        <el-transfer
+          v-model="formData.tag"
+          :data="allTags.map(tag => ({ key: tag, label: tag }))"
+          :titles="['可选标签', '已选标签']"
+          filterable
+        />
+        <div style="color: #999">最多选择{{tagLimit}}个标签</div>
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <el-button @click="dialogVisible = false">取消</el-button>
+      <el-button type="primary" @click="handleSubmit">确定</el-button>
+    </template>
+  </el-dialog>
 
-
-  <!-- </el-space> -->
-  <!-- 表格 -->
   <el-table :data="tableData" style="width: 100%">
     <el-table-column type="selection" width="55" />
     <el-table-column property="scene" label="名称" width="240" />
@@ -58,6 +84,7 @@
 import { ref, reactive } from 'vue'
 import { GetImageSence } from "@/js/api/imageApi"
 import router from "@/router"
+import { ElMessage } from 'element-plus'
 
 
 
@@ -79,8 +106,37 @@ const handleCurrentChange = (val: number) => {
   selectScene(pagination)
 }
 
+const dialogVisible = ref(false)
+const formData = ref<Scene>({
+  id: '',
+  scene: '',
+  childScene: [],
+  cover: '',
+  createTime: '',
+  updateTime: '',
+  author: '',
+  tag: []
+})
+const allTags = ref<string[]>([]) // 所有可选标签
+const tagLimit = 20 // 标签数量限制
+
 const editScene = (scene: Scene) => {
-  console.log(scene)
+  formData.value = JSON.parse(JSON.stringify(scene))
+  dialogVisible.value = true
+  // TODO: 这里需要获取所有可选标签
+}
+
+const handleSubmit = () => {
+  if (formData.value.tag.length > tagLimit) {
+    ElMessage.error(`标签数量不能超过${tagLimit}个`)
+    return
+  }
+  // TODO: 调用API提交修改
+  dialogVisible.value = false
+}
+
+const handleUploadSuccess = (response: any) => {
+  formData.value.cover = response.data.url // 假设返回结构
 }
 
 interface Scene {
@@ -108,19 +164,26 @@ GetImageSence(pagination).then((res: any) => {
   let respDataList: Scene[] = []
   let respData : Scene
   res.data.data.forEach((item:any) => {
-    
-    let tagList = item.tag.map((tag: any) => {
+    // console.log(item.tag)
+    respData = item
+    if (item.tag == null || item.tag == undefined || item.tag.length == 0) {
+      item.tag = ['无']
+    }else{
+      let tagList = item.tag.map((tag: any) => {
       if (tag.tagName) {
         return tag.tagName
       }
     })
-   respData = item
-   respData.tag = tagList
+    
+    respData.tag = tagList
+    }
    respDataList.push(respData)
   })
   tableData.value = respDataList
+  console.log(respDataList)
 })
 </script>
+
 
 
 
