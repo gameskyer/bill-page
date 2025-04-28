@@ -10,14 +10,16 @@
       </el-form-item>
       <el-form-item label="封面图">
         <el-upload
-          action="/api/upload" 
+          action="http://127.0.0.1:8004/image/updateSceneCover" 
+          :data="uploadSceneCover"
+          :on-change="handleChange"
           :on-success="handleUploadSuccess"
           :show-file-list="false"
         >
           <el-image 
             v-if="formData.cover" 
             :src="formData.cover" 
-            style="width: 100px; height: 100px"
+            style="width: 150px; "
           />
           <el-button v-else type="primary">点击上传</el-button>
         </el-upload>
@@ -29,7 +31,8 @@
           :titles="['可选标签', '已选标签']"
           filterable
         />
-        <div style="color: #999">最多选择{{tagLimit}}个标签</div>
+
+        <div style="color: #999; display: block; width: 100%; margin-top: 8px; white-space: normal;">最多选择{{tagLimit}}个标签</div>
       </el-form-item>
     </el-form>
     <template #footer>
@@ -37,7 +40,7 @@
       <el-button type="primary" @click="handleSubmit">确定</el-button>
     </template>
   </el-dialog>
-
+<!-- 表格 -->
   <el-table :data="tableData" style="width: 100%">
     <el-table-column type="selection" width="55" />
     <el-table-column property="scene" label="名称" width="240" />
@@ -82,7 +85,7 @@
 <script lang="ts" setup>
 
 import { ref, reactive } from 'vue'
-import { GetImageSence } from "@/js/api/imageApi"
+import { GetImageSence,GetSceneTagList } from "@/js/api/imageApi"
 import router from "@/router"
 import { ElMessage } from 'element-plus'
 
@@ -97,6 +100,15 @@ const pagination = reactive({
   page: currentPage.value,
   param: {},
 })
+const uploadSceneCover = ref({
+  id: '',
+})
+const handleChange = (file:any) => {
+  console.log('上传前获取文件名:', file.name)
+  uploadSceneCover.value.id = formData.value.id
+  // 可以在此处添加额外验证逻辑
+  return true
+}
 const handleSizeChange = (val: number) => {
   pagination.results = val
   selectScene(pagination)
@@ -123,6 +135,9 @@ const tagLimit = 20 // 标签数量限制
 const editScene = (scene: Scene) => {
   formData.value = JSON.parse(JSON.stringify(scene))
   dialogVisible.value = true
+  GetSceneTagList().then((res: any) => {
+    allTags.value = res.data.map((tag: any) => tag.tagName) // 假设返回结构
+  })
   // TODO: 这里需要获取所有可选标签
 }
 
@@ -136,6 +151,7 @@ const handleSubmit = () => {
 }
 
 const handleUploadSuccess = (response: any) => {
+  console.log('上传成功:', response)
   formData.value.cover = response.data.url // 假设返回结构
 }
 
