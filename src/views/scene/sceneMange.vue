@@ -1,6 +1,6 @@
 <template>
- <!-- 在template最外层添加dialog -->
- <el-dialog v-model="dialogVisible" title="编辑场景" width="50%">
+  <!-- 在template最外层添加dialog -->
+  <el-dialog v-model="dialogVisible" title="编辑场景" width="50%">
     <el-form :model="formData" label-width="80px">
       <el-form-item label="场景名称">
         <el-input v-model="formData.scene" />
@@ -9,30 +9,19 @@
         <el-input v-model="formData.author" />
       </el-form-item>
       <el-form-item label="封面图">
-        <el-upload
-          action="http://127.0.0.1:8004/image/updateSceneCover" 
-          :data="uploadSceneCover"
-          :on-change="handleChange"
-          :on-success="handleUploadSuccess"
-          :show-file-list="false"
-        >
-          <el-image 
-            v-if="formData.cover" 
-            :src="formData.cover" 
-            style="width: 150px; "
-          />
+        <el-upload :data="uploadSceneCover" :on-change="handleChange" :show-file-list="false">
+          <el-image v-if="formData.cover" :src="formData.cover" style="width: 150px; " />
           <el-button v-else type="primary">点击上传</el-button>
         </el-upload>
       </el-form-item>
       <el-form-item label="标签">
-        <el-transfer
-          v-model="formData.tag"
-          :data="allTags.map(tag => ({ key: tag, label: tag }))"
-          :titles="['可选标签', '已选标签']"
-          filterable
-        />
-
-        <div style="color: #999; display: block; width: 100%; margin-top: 8px; white-space: normal;">最多选择{{tagLimit}}个标签</div>
+        <el-transfer v-model="formData.tag" :data="allTags.map(tag => ({
+          key: tag.id,       // 使用id作为key
+          label: tag.tagName // 显示tagName作为label
+        }))" :titles="['可选标签', '已选标签']" filterable />
+        <div style="color: #999; display: block; width: 100%; margin-top: 8px; white-space: normal;">
+          最多选择{{ tagLimit }}个标签
+        </div>
       </el-form-item>
     </el-form>
     <template #footer>
@@ -40,41 +29,39 @@
       <el-button type="primary" @click="handleSubmit">确定</el-button>
     </template>
   </el-dialog>
-<!-- 表格 -->
+  <!-- 表格 -->
   <el-table :data="tableData" style="width: 100%">
     <el-table-column type="selection" width="55" />
     <el-table-column property="scene" label="名称" width="240" />
-    <el-table-column
-      property="childScene"
-      label="子集"
-      width="240"
-      show-overflow-tooltip
-    />
+    <!-- <el-table-column property="childScene" label="子集" width="240" show-overflow-tooltip /> -->
     <el-table-column property="cover" label="封面" width="150">
       <template #default="scope">
-      <el-image preview-teleported hide-on-click-modal :preview-src-list="[scope.row.cover]" :src="scope.row.cover" style="width: 100px; " />
-    </template>
+        <el-image preview-teleported hide-on-click-modal :preview-src-list="[scope.row.cover]" :src="scope.row.cover"
+          style="width: 100px; " />
+      </template>
     </el-table-column>
     <el-table-column property="author" label="作者" width="240" />
-    <el-table-column property="tag" label="标签" width="240" >
+    <el-table-column property="tag" label="标签" width="240">
       <template #default="scope">
-        <el-tag style="margin-right:5PX ;" v-for="(tag, index) in scope.row.tag" :key="index" size="small" type="info">{{ tag }}</el-tag>
+        <el-tag style="margin-right:5PX;" v-for="tag in scope.row.tag" :key="tag.id" size="small" type="info">
+          {{ tag }}
+        </el-tag>
       </template>
     </el-table-column>
     <el-table-column property="createTime" label="上传时间" width="240" />
     <el-table-column property="updateTime" label="修改时间" width="240" />
     <el-table-column fixed="right" label="操作" min-width="120">
       <template #default="socpe">
-        <el-button text bg type="primary" @click="editScene(socpe.row)" >修改</el-button>
+        <el-button text bg type="primary" @click="editScene(socpe.row)">修改</el-button>
 
-        <el-button text bg  type="danger" >
+        <el-button text bg type="danger">
           删除
         </el-button>
       </template>
 
     </el-table-column>
   </el-table>
-<!-- 分页 -->
+  <!-- 分页 -->
   <div class="pagination-block">
     <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :page-sizes="[14, 28, 70, 140]"
       layout="total, sizes, prev, pager, next, jumper" :total="total" @size-change="handleSizeChange"
@@ -85,10 +72,8 @@
 <script lang="ts" setup>
 
 import { ref, reactive } from 'vue'
-import { GetImageSence,GetSceneTagList } from "@/js/api/imageApi"
-import router from "@/router"
+import { GetImageSence, GetSceneTagList, UpdateScene } from "@/js/api/imageApi"
 import { ElMessage } from 'element-plus'
-
 
 
 const currentPage = ref(1)
@@ -101,59 +86,103 @@ const pagination = reactive({
   param: {},
 })
 const uploadSceneCover = ref({
-  id: '',
+  base64: '',
+  filename: ''
 })
-const handleChange = (file:any) => {
-  console.log('上传前获取文件名:', file.name)
-  uploadSceneCover.value.id = formData.value.id
-  // 可以在此处添加额外验证逻辑
-  return true
+const handleChange = (file: any) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      if (!e.target?.result || typeof e.target.result !== 'string') {
+        reject(new Error('Failed to read file as base64'))
+        return
+      }
+      uploadSceneCover.value = {
+        base64: e.target.result,
+        filename: file.name
+      }
+      formData.value.cover = e.target.result
+      resolve(true)
+    }
+    reader.onerror = () => {
+      reject(new Error('File reading failed'))
+    }
+    reader.readAsDataURL(file.raw)
+  })
 }
+//分页每页数量改动
 const handleSizeChange = (val: number) => {
   pagination.results = val
   selectScene(pagination)
 }
+//分页页码改动
 const handleCurrentChange = (val: number) => {
   pagination.page = val
   selectScene(pagination)
 }
 
 const dialogVisible = ref(false)
-const formData = ref<Scene>({
+const formData = ref<any>({
   id: '',
   scene: '',
-  childScene: [],
+  // childScene: [],
   cover: '',
   createTime: '',
   updateTime: '',
   author: '',
-  tag: []
+  tag: [],
+  uploadCover: {
+    id: '',
+    base64: '',
+    filename: ''
+  }
 })
-const allTags = ref<string[]>([]) // 所有可选标签
+
+const allTags = ref<{ id: string; tagName: string }[]>([])
 const tagLimit = 20 // 标签数量限制
 
+//打开编辑弹窗
 const editScene = (scene: Scene) => {
   formData.value = JSON.parse(JSON.stringify(scene))
   dialogVisible.value = true
   GetSceneTagList().then((res: any) => {
-    allTags.value = res.data.map((tag: any) => tag.tagName) // 假设返回结构
+    allTags.value = res.data
+    // 将标签名数组转换为对应的标签id数组
+    if (scene.tag && scene.tag.length > 0) {
+      formData.value.tag = allTags.value
+        .filter(tag => scene.tag.includes(tag.tagName))
+        .map(tag => tag.id)
+    }
   })
-  // TODO: 这里需要获取所有可选标签
 }
 
+//提交编辑信息
 const handleSubmit = () => {
   if (formData.value.tag.length > tagLimit) {
     ElMessage.error(`标签数量不能超过${tagLimit}个`)
     return
   }
-  // TODO: 调用API提交修改
-  dialogVisible.value = false
+  //如果没有修改封面图，则不传封面图
+  if (uploadSceneCover.value.base64 != '') {
+    formData.value.uploadCover = uploadSceneCover.value
+  }
+
+  UpdateScene(formData.value).then((res: any) => {
+    if (res.code == 0) {
+      formData.value.cover = ''
+      dialogVisible.value = false
+      ElMessage.success(res.message)
+      selectScene(pagination)
+    } else {
+      ElMessage.error('修改失败')
+    }
+  }).catch((error: any) => {
+    console.error('上传失败:', error)
+    ElMessage.error('上传失败')
+  })
+  // 
 }
 
-const handleUploadSuccess = (response: any) => {
-  console.log('上传成功:', response)
-  formData.value.cover = response.data.url // 假设返回结构
-}
 
 interface Scene {
   id: string
@@ -165,43 +194,36 @@ interface Scene {
   author: string
   tag: string[]
 }
+window.onload = function () {
+  selectScene(pagination)
+}
 function selectScene(pagination: any) {
   GetImageSence(pagination).then((res: any) => {
     total.value = res.data.total
-    tableData.value = res.data.data
+    let respDataList: Scene[] = []
+    let respData: Scene
+    res.data.data.forEach((item: any) => {
+      respData = item
+      if (item.tag == null || item.tag == undefined || item.tag.length == 0) {
+        item.tag = ['无']
+      } else {
+        let tagList = item.tag.map((tag: any) => {
+          if (tag.tagName) {
+            return tag.tagName
+          }
+        })
+
+        respData.tag = tagList
+      }
+      respDataList.push(respData)
+    })
+    tableData.value = respDataList
   })
 
 }
 
-// const sences = ref<Scene[]>([])
-const tableData = ref<Scene[]>([]) 
-GetImageSence(pagination).then((res: any) => {
-  total.value = res.data.total
-  let respDataList: Scene[] = []
-  let respData : Scene
-  res.data.data.forEach((item:any) => {
-    // console.log(item.tag)
-    respData = item
-    if (item.tag == null || item.tag == undefined || item.tag.length == 0) {
-      item.tag = ['无']
-    }else{
-      let tagList = item.tag.map((tag: any) => {
-      if (tag.tagName) {
-        return tag.tagName
-      }
-    })
-    
-    respData.tag = tagList
-    }
-   respDataList.push(respData)
-  })
-  tableData.value = respDataList
-  console.log(respDataList)
-})
+const tableData = ref<Scene[]>([])
 </script>
-
-
-
 
 <style scoped>
 .pagination-block {
@@ -259,6 +281,7 @@ GetImageSence(pagination).then((res: any) => {
   height: 100%;
   display: block;
 }
+
 .cell {
   text-align: center;
 

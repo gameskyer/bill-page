@@ -59,3 +59,12 @@ export function UpdateSceneTag(tag:any){
     data: tag,
   });
 }
+
+export function UpdateScene(formData:any){
+  return axios({
+    method: 'post',
+    url: '/image/updateScene',
+    headers: { 'content-type': 'application/json' },
+    data: formData,
+  });
+}
