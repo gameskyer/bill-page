@@ -1,4 +1,25 @@
 <template>
+  <!-- 搜索栏 -->
+  <div class="search-bar">
+    <el-select v-model="searchType" style="width: 120px">
+      <el-option v-for="item in searchTypes" :key="item.value" :label="item.label" :value="item.value">
+        <!-- 这里使用整数作为value -->
+      </el-option>
+      <!-- <el-option label="全文搜索" value=0 />
+      <el-option label="标签搜索" value=1 />
+      <el-option label="作者搜索" value=2 />
+      <el-option label="标题搜索" value=3 /> -->
+    </el-select>
+    <el-select v-if="searchType === 1" v-model="searchValue" multiple filterable style="width: 200px; margin-left: 10px"
+      placeholder="请选择标签">
+      <el-option v-for="tag in allTags" :key="tag.id" :label="tag.tagName" :value="tag.tagName" />
+    </el-select>
+    <el-input v-else v-model="searchValue" style="width: 200px; margin-left: 10px" placeholder="请输入搜索内容" />
+    <el-button type="primary" style="margin-left: 10px" @click="handleSearch">
+      搜索
+    </el-button>
+  </div>
+
   <!-- 在template最外层添加dialog -->
   <el-dialog v-model="dialogVisible" title="编辑场景" width="50%">
     <el-form :model="formData" label-width="80px">
@@ -71,7 +92,8 @@
 
 <script lang="ts" setup>
 
-import { ref, reactive } from 'vue'
+import { ref, reactive, watch } from 'vue'
+// import { onBeforeRouteUpdate } from 'vue-router'
 import { GetImageSence, GetSceneTagList, UpdateScene } from "@/js/api/imageApi"
 import { ElMessage } from 'element-plus'
 
@@ -83,6 +105,7 @@ const total = ref()
 const pagination = reactive({
   results: pageSize.value,
   page: currentPage.value,
+  type: 0,
   param: {},
 })
 const uploadSceneCover = ref({
@@ -169,10 +192,15 @@ const handleSubmit = () => {
 
   UpdateScene(formData.value).then((res: any) => {
     if (res.code == 0) {
-      formData.value.cover = ''
-      dialogVisible.value = false
-      ElMessage.success(res.message)
-      selectScene(pagination)
+      setTimeout(() => {
+        dialogVisible.value = false
+        formData.value.cover = ''
+        dialogVisible.value = false
+        ElMessage.success(res.message)
+        // 重新获取数据
+        selectScene(pagination)
+      }, 100)
+
     } else {
       ElMessage.error('修改失败')
     }
@@ -194,9 +222,32 @@ interface Scene {
   author: string
   tag: string[]
 }
-window.onload = function () {
-  selectScene(pagination)
-}
+// window.onload = function () {
+//   selectScene(pagination)
+// }
+
+GetImageSence(pagination).then((res: any) => {
+  total.value = res.data.total
+  let respDataList: Scene[] = []
+  let respData: Scene
+  res.data.data.forEach((item: any) => {
+    respData = item
+    if (item.tag == null || item.tag == undefined || item.tag.length == 0) {
+      item.tag = ['无']
+    } else {
+      let tagList = item.tag.map((tag: any) => {
+        if (tag.tagName) {
+          return tag.tagName
+        }
+      })
+
+      respData.tag = tagList
+    }
+    respDataList.push(respData)
+  })
+  tableData.value = respDataList
+})
+
 function selectScene(pagination: any) {
   GetImageSence(pagination).then((res: any) => {
     total.value = res.data.total
@@ -223,6 +274,24 @@ function selectScene(pagination: any) {
 }
 
 const tableData = ref<Scene[]>([])
+
+// 搜索相关
+const searchType = ref(0)
+const searchValue = ref('')
+const searchTypes = [
+  { label: '全文搜索', value: 0 },
+  { label: '标签搜索', value: 1 },
+  { label: '作者搜索', value: 2 },
+  { label: '标题搜索', value: 3 }
+]
+// 搜索方法
+const handleSearch = () => {
+  pagination.type = searchType.value, // 重置页码为1
+    pagination.param = {
+      searchValue: searchValue.value
+    }
+  selectScene(pagination)
+}
 </script>
 
 <style scoped>
@@ -241,6 +310,12 @@ const tableData = ref<Scene[]>([])
 </style>
 
 <style>
+.search-bar {
+  display: flex;
+  margin-bottom: 20px;
+  width: 33%;
+}
+
 .time {
   font-size: 12px;
   color: #999;
