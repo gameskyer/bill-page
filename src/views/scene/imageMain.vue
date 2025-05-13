@@ -44,7 +44,10 @@ const handleCurrentChange = (val: number) => {
 }
 
 const clickIMG = (id: string) => {
-  router.push({ path: '/imageContent/' + id })
+  router.push({
+    name: 'imageContent',
+    params: { id }
+  })
   console.log(id)
 }
 interface Scene {
