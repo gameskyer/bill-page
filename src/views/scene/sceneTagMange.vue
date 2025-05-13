@@ -59,6 +59,7 @@ import { GetSceneTagList, DeleteSceneTag, AddSceneTag,UpdateSceneTag } from '@/j
 import type { FunctionalComponent } from 'vue';
 import type { CheckboxValueType, Column } from 'element-plus';
 import { CirclePlus, Delete } from '@element-plus/icons-vue';
+import { Fragment } from 'vue'
 
 
 const submitUpdateForm = () =>{
@@ -202,13 +203,13 @@ const columns: Column<any>[] = [
 		key: 'operations',
 		title: '操作',
 		cellRenderer: ({ rowData }) => (
-			<>
+			<Fragment>
 				<ElButton size="small" onClick={() => openUpdateDialogSingle(rowData)}>
 					修改</ElButton>
 				<ElButton size="small" type="danger" onClick={() => openDeleteDialogSingle(rowData)}>
 					删除
 				</ElButton>
-			</>
+			</Fragment>
 		),
 		width: 150,
 		align: 'center',

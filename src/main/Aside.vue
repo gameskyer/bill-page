@@ -16,6 +16,7 @@
           <el-menu-item index="2-3" route="/imageMain">图片集合</el-menu-item>
           <el-menu-item index="2-4" route="/sceneTagManage">标签管理</el-menu-item>
           <el-menu-item index="2-5" route="/sceneMange">图片管理</el-menu-item>
+          <el-menu-item index="2-6" route="/sceneMange">表单测试</el-menu-item>
         </el-menu-item-group>
       </el-sub-menu>
       <el-sub-menu index="3">

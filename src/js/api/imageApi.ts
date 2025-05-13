@@ -68,3 +68,12 @@ export function UpdateScene(formData:any){
     data: formData,
   });
 }
+
+export function AddScene(formData:any){
+  return axios({
+    method: 'post',
+    url: '/image/addScene',
+    headers: { 'content-type': 'application/json' },
+    data: formData,
+  });
+}
