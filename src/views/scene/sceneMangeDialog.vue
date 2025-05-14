@@ -10,7 +10,7 @@
             <el-input v-model="formData.author" />
           </el-form-item>
           <el-form-item label="封面图">
-            <el-upload :data="uploadSceneCover" :on-change="handleChange" :show-file-list="false">
+            <el-upload :data="uploadSceneCover" :auto-upload="false" :on-change="handleChange" :show-file-list="false">
               <el-image v-if="formData.cover" :src="formData.cover" style="width: 150px; " />
               <el-button v-else type="primary">点击上传</el-button>
             </el-upload>
@@ -107,13 +107,25 @@ watch(() => props.mode, (newMode) => {
 
 // 表单数据
 const formData = reactive<SceneData>({
-  ...props.sceneData
+  id: '',
+  scene: '',
+  cover: '',
+  createTime: '',
+  updateTime: '',
+  author: '',
+  tag: [],
+  uploadCover: {
+    id: '',
+    base64: '',
+    filename: ''
+  }
 })
 
 // 监听 sceneData 变化
 watch(() => props.sceneData, (newVal) => {
+  // 使用 Object.assign 更新所有字段
   Object.assign(formData, newVal)
-}, { deep: true })
+}, { deep: true, immediate: true })
 
 // 标签限制
 const tagLimit = 20
@@ -155,17 +167,16 @@ const handleChange = (file: any) => {
         reject(new Error('Failed to read file as base64'))
         return
       }
-      // 确保 uploadSceneCover 存在
-      if (!formData.uploadCover) {
-        formData.uploadCover = {
-          id: '',
-          base64: '',
-          filename: ''
-        }
-      }
-      formData.uploadCover.base64 = e.target.result
-      formData.uploadCover.filename = file.name
+      
+      // 只更新图片相关字段，保持其他字段不变
       formData.cover = e.target.result
+      formData.uploadCover = {
+        id: formData.uploadCover?.id || '',  // 保持原有 id，如果不存在则使用空字符串
+        base64: e.target.result,
+        filename: file.name
+      }
+      
+      console.log('更新后的 formData:', formData)  // 调试日志
       resolve(true)
     }
     reader.onerror = () => {
