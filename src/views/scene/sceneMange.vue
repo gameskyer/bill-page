@@ -7,7 +7,7 @@
     </el-select>
     <el-select v-if="searchType === 1" v-model="searchValue" multiple filterable style="width: 200px; margin-left: 10px"
       placeholder="请选择标签">
-      <el-option v-for="tag in allTags" :key="tag.id" :label="tag.tagName" :value="tag.tagName" />
+      <el-option v-for="tag in allTags" :key="tag.id" :label="tag.tagName" :value="tag.id" />
     </el-select>
     <el-input v-else v-model="searchValue" style="width: 200px; margin-left: 10px" placeholder="请输入搜索内容" />
     <el-button type="primary" style="margin-left: 10px" @click="handleSearch">
@@ -20,12 +20,8 @@
   </div>
 
   <!-- 使用对话框组件 -->
-  <SceneMangeDialog
-    v-model="dialogVisible"
-    :scene-data="formData"
-    :mode="dialogMode"
-    @submit-success="handleSubmitSuccess"
-  />
+  <SceneMangeDialog v-model="dialogVisible" :scene-data="formData" :mode="dialogMode"
+    @submit-success="handleSubmitSuccess" />
 
   <!-- 表格 -->
   <el-table :data="tableData" style="width: 100%">
@@ -45,8 +41,8 @@
         </el-tag>
       </template>
     </el-table-column>
-    <el-table-column property="createTime" label="上传时间" width="240" />
-    <el-table-column property="updateTime" label="修改时间" width="240" />
+    <el-table-column property="createdAt" label="上传时间" width="240" />
+    <el-table-column property="updatedAt" label="修改时间" width="240" />
     <el-table-column fixed="right" label="操作" min-width="240">
       <template #default="socpe">
         <el-button text bg type="primary" @click="editScene(socpe.row)">修改</el-button>
@@ -69,7 +65,7 @@
 <script lang="ts" setup>
 
 import { ref, reactive, watch } from 'vue'
-import SceneMangeDialog from './sceneMangeDialog.vue'
+import SceneMangeDialog from '@/components/sceneMangeDialog.vue'
 import { GetImageSence, GetSceneTagList, UpdateScene } from "@/js/api/imageApi"
 import { ElMessage } from 'element-plus'
 
@@ -177,8 +173,8 @@ interface Scene {
 
 
 GetSceneTagList().then((res: any) => {
-    allTags.value = res.data
-  })
+  allTags.value = res.data
+})
 
 GetImageSence(pagination).then((res: any) => {
   total.value = res.data.total
@@ -240,10 +236,12 @@ const searchTypes = [
 ]
 // 搜索方法
 const handleSearch = () => {
-  pagination.type = searchType.value, // 重置页码为1
+
+  pagination.type = searchType.value,
     pagination.param = {
-      searchValue: searchValue.value
+      searchValue: searchValue.value // 这里传递的是标签ID数组
     }
+
   selectScene(pagination)
 }
 </script>

@@ -27,12 +27,12 @@
           <el-divider content-position="left">标签</el-divider>
           <div class="tags-group">
             <el-tag
-              v-for="(tag, index) in scene.tag"
-              :key="index"
+              v-for="(tag) in scene.tag"
+              :key="tag.id"
               type="info"
               class="tag-item"
             >
-              {{ tag }}
+              {{ tag.tagName }}
             </el-tag>
           </div>
         </div>
@@ -65,6 +65,7 @@
 import { ref } from "vue";
 const containerHeight = ref(400);
 const clickIMG = (id) => {
+  console.log(id)
   router.push({ path: '/imageView/'+id })
 }
 

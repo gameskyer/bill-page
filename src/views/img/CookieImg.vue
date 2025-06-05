@@ -15,8 +15,9 @@ export default {
   setup () {
     const dateList = ref();
     GetBillDateList().then((res) => {
+      console.log(res)
       let arr = new Array();
-      for (var data of res) {
+      for (var data of res.data) {
         let obj = new Object();
         obj = data
         arr.push(obj);

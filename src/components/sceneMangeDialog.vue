@@ -1,7 +1,7 @@
 <template>
   <el-dialog v-model="dialogVisible" :title="dialogTitle" width="60%" @close="dialogVisible = false">
     <el-tabs v-model="activeTab">
-      <el-tab-pane label="表单页" name="form">
+      <el-tab-pane label="详情" name="form">
         <el-form :model="formData" label-width="80px">
           <el-form-item label="场景名称">
             <el-input v-model="formData.scene" />
@@ -27,10 +27,13 @@
         </el-form>
       </el-tab-pane>
 
-      <el-tab-pane label="表格页" name="table" :disabled="!showChildScene">
+      <el-tab-pane label="内容" name="table" :disabled="!showChildScene">
+        <el-button type="primary" @click="dialogUploadFormVisible = true">上传内容</el-button>
+
         <el-table :data="childScene" border>
-          <el-table-column prop="name" label="姓名" />
-          <el-table-column prop="age" label="年龄" />
+          <el-table-column prop="childSceneName" label="名称" />
+          <el-table-column prop="createdAt" label="上传时间" />
+          <el-table-column prop="updatedAt" label="修改时间" />
         </el-table>
       </el-tab-pane>
     </el-tabs>
@@ -40,12 +43,145 @@
       <el-button type="primary" @click="handleSubmit">提交</el-button>
     </template>
   </el-dialog>
+
+  <!-- 上传表单 -->
+  <el-dialog v-model="dialogUploadFormVisible" title="Shipping address" width="500">
+    <el-form :model="uploadForm" class="upload-form">
+      <el-form-item label="名称" :label-width="'80px'" class="form-item">
+        <el-input v-model="uploadForm.childSceneName" autocomplete="off" placeholder="为空时使用压缩包文件名称" />
+      </el-form-item>
+      <el-upload 
+        class="upload-demo" 
+        drag 
+        :action="uploadUrl" 
+        :auto-upload="false" 
+        multiple 
+     
+        :http-request="customUpload" 
+        ref="uploadRef"
+        :file-list="fileList"
+        :on-change="handleFileChange"
+        :limit="10"
+        :on-exceed="handleExceed"
+      >
+        <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+        <div class="el-upload__text">
+          拖拽文件到此处或 <em>点击上传</em>
+        </div>
+        <template #tip>
+          <div class="el-upload__tip">
+            支持多个文件上传，大小不超过 500kb
+          </div>
+        </template>
+      </el-upload>
+    </el-form>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="dialogUploadFormVisible = false">取消</el-button>
+        <el-button type="primary" @click="handleUploadConfirm">
+          确认
+        </el-button>
+      </div>
+    </template>
+  </el-dialog>
 </template>
+
 
 <script setup lang="ts">
 import { ref, reactive, watch, computed } from 'vue'
-import { GetSceneTagList, AddScene, UpdateScene } from '@/js/api/imageApi'
+import { GetSceneTagList, AddScene, UpdateScene, GetImageList } from '@/js/api/imageApi'
 import { ElMessage } from 'element-plus'
+
+const dialogUploadFormVisible = ref(false)
+const formLabelWidth = '140px'
+const uploadForm = reactive({
+  childSceneName: '',
+  parentScene: '',
+})
+
+// 添加上传相关的引用和方法
+const uploadRef = ref()
+const uploadUrl = 'http://localhost:8004/image/uploadChildScene'
+
+// 添加文件列表
+const fileList = ref([])
+
+// 处理文件变化
+const handleFileChange = (file: any, files: any) => {
+  fileList.value = files
+}
+
+// 处理文件超出限制
+const handleExceed = (files: any) => {
+  ElMessage.warning(`最多只能上传 10 个文件`)
+}
+
+// 修改自定义上传方法
+const customUpload = async (options: any) => {
+  // 如果是第一个文件，执行上传
+  if (options.file.uid !== fileList.value[0].uid) {
+    return
+  }
+
+  const formData = new FormData()
+  
+  // 添加所有文件
+  fileList.value.forEach((file: any) => {
+    formData.append('files', file.raw)
+  })
+  
+  // 添加其他表单数据
+  formData.append('childSceneName', uploadForm.childSceneName)
+  formData.append('parentScene', props.sceneData.id)
+
+  try {
+    const response = await fetch(uploadUrl, {
+      method: 'POST',
+      body: formData
+    })
+    
+    if (response.ok) {
+      const result = await response.json()
+      // 对所有文件都调用成功回调
+      fileList.value.forEach(() => {
+        options.onSuccess(result)
+      })
+    } else {
+      // 对所有文件都调用失败回调
+      fileList.value.forEach(() => {
+        options.onError(new Error('上传失败'))
+      })
+    }
+  } catch (error) {
+    // 对所有文件都调用失败回调
+    fileList.value.forEach(() => {
+      options.onError(error)
+    })
+  }
+}
+
+// 修改确认按钮的处理方法
+const handleUploadConfirm = () => {
+  // 触发表单验证
+  if (!uploadForm.childSceneName) {
+    ElMessage.warning('请输入名称')
+    return
+  }
+  
+  // 检查是否有文件
+  if (fileList.value.length === 0) {
+    ElMessage.warning('请选择要上传的文件')
+    return
+  }
+
+  // 获取上传组件实例并提交第一个文件
+  // 由于我们在 customUpload 中做了处理，只需要提交第一个文件即可
+  uploadRef.value.submit()
+}
+
+// 修改上传成功处理
+
+
 
 interface Tag {
   id: string
@@ -136,6 +272,16 @@ const allTags = ref<Tag[]>([])
 // 子场景数据
 const childScene = ref([])
 
+// 获取子场景数据
+const fetchChildScene = async () => {
+  try {
+    const res = await GetImageList(props.sceneData.id)
+    childScene.value = res.data
+  } catch (error) {
+    console.error('获取子场景数据失败:', error)
+  }
+}
+// fetchChildScene()
 // 当前激活的标签页
 const activeTab = ref('form')
 
@@ -167,7 +313,7 @@ const handleChange = (file: any) => {
         reject(new Error('Failed to read file as base64'))
         return
       }
-      
+
       // 只更新图片相关字段，保持其他字段不变
       formData.cover = e.target.result
       formData.uploadCover = {
@@ -175,7 +321,7 @@ const handleChange = (file: any) => {
         base64: e.target.result,
         filename: file.name
       }
-      
+
       console.log('更新后的 formData:', formData)  // 调试日志
       resolve(true)
     }
@@ -220,5 +366,39 @@ const dialogTitle = computed(() => {
 <style scoped>
 .el-transfer {
   width: 100%;
+}
+
+.left-align-form-item {
+  text-align: center;
+
+  :deep(.el-form-item__content) {
+    justify-content: flex-start;
+  }
+}
+
+.upload-form {
+
+  :deep(.el-form-item) {
+    margin-bottom: 20px;
+  }
+
+  :deep(.el-form-item__content) {
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  :deep(.el-upload) {
+    width: 100%;
+  }
+
+  :deep(.el-upload-dragger) {
+    width: 100%;
+  }
+}
+
+.form-item {
+  :deep(.el-form-item__content) {
+    margin-left: 0 !important;
+  }
 }
 </style>

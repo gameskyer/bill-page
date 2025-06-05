@@ -76,7 +76,7 @@ export function GetNoTypeData(params: Object) {
 }
 
 export async function GetBillTypeList() {
-  return await axios.get('/table/getBillTypeList');
+  return await axios.post('/table/getBillTypeList');
 }
 
 export async function GetBillDateList() {

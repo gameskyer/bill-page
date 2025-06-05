@@ -2,28 +2,8 @@
   <div id="myChart" :style="{ width: '100%', height: '1000px' }"></div>
   <div id="category" :style="{ width: '100%', height: '500px' }"></div>
 
-  <!-- <div class="demo-progress">
-    <div v-for="value in arr">
-      <label>{{ value.billTypeName }}</label>
-      <el-progress :text-inside="true" :stroke-width="20" :percentage="value.percentage" :color="value.color" />
-    </div>
-  </div> -->
 </template>
-<!-- <style scoped>
-.demo-progress .el-progress--line {
-  margin-top: 5px;
-  margin-bottom: 15px;
-  width: 100%;
-}
 
-.demo-progress>>>.el-progress-bar__innerText {
-  color: rgba(0, 0, 0);
-}
-
-.demo-progress>>>.el-progress-bar__outer {
-  background-color: rgba(128, 126, 126, 0.2);
-}
-</style> -->
 
 <script>
 import * as echarts from 'echarts';
@@ -37,9 +17,9 @@ export default {
     const datas = reactive({ arr: [] });
     GetPercentage("").then((res) => {
       console.log(res)
-      for (var i = 0; i < res.length; i++) {
-        var name = res[i].billTypeName
-        res[i].color = typeColor.get(name)
+      for (var i = 0; i < res.data.length; i++) {
+        var name = res.data[i].billTypeName
+        res.data[i].color = typeColor.get(name)
       }
       datas.arr = res;
     });
@@ -104,7 +84,7 @@ export default {
 
     const data = ref();
     await GetBillStackedLine().then((res) => {
-      data.value = res;
+      data.value = res.data;
     });
     const json2 = unref(data);
     var dom = document.getElementById('myChart');
@@ -184,6 +164,9 @@ export default {
         series: seriesData,
       };
       myChart.on('click', 'series', async function (event) {
+        if (event.name == 'undefined') {
+          event.name = '';
+        }
         const data3 = ref([]);
         await axios({
           method: 'get',
@@ -197,9 +180,9 @@ export default {
 
             categoryAxis.value = []
             category.value = []
-            for (var i = 0; i < res.length; i++) {
-              var name = res[i].billTypeName
-              res[i].color = typeColor.get(name)
+            for (var i = 0; i < res.data.length; i++) {
+              var name = res.data[i].billTypeName
+              res.data[i].color = typeColor.get(name)
             }
             datas.arr = res
           });
